@@ -1,3 +1,16 @@
-# flutter_practice
+# Pomodoro Flutter App
 
-A new Flutter project.
+Aplicación Pomodoro desarrollada con Flutter.
+
+## Features
+
+- Temporizador Pomodoro
+- Pausa corta y larga
+- Estadísticas de sesiones
+- Persistencia de datos
+
+## Tecnologías
+
+- Flutter
+- Dart
+- Riverpod
