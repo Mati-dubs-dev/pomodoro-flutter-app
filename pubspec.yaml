@@ -1,0 +1,33 @@
+name: pomodoro_pro
+description: "Pomodoro timer with sessions, notifications and settings."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # Audio
+  audioplayers: ^6.0.0
+
+  # Notificaciones locales
+  flutter_local_notifications: ^17.2.2
+
+  # Persistencia
+  shared_preferences: ^2.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
