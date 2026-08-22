@@ -1,39 +1,27 @@
-import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart'; // ← debugPrint oficial de Flutter
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
-/// Servicio de audio para reproducir sonidos del temporizador.
-/// Usa el paquete audioplayers ^6.x.
-class AudioService {
-  final AudioPlayer _player = AudioPlayer();
+abstract interface class PomodoroAudio {
+  Future<void> playSessionComplete();
+  Future<void> playBreakComplete();
+  Future<void> dispose();
+}
 
-  /// Sonido al completar una sesión Pomodoro.
-  Future<void> playSessionComplete() async {
+class AudioService implements PomodoroAudio {
+  @override
+  Future<void> playSessionComplete() => _play(SystemSoundType.alert);
+
+  @override
+  Future<void> playBreakComplete() => _play(SystemSoundType.click);
+
+  Future<void> _play(SystemSoundType type) async {
     try {
-      await _player.stop();
-      await _player.play(AssetSource('sounds/session_complete.mp3'));
-    } catch (e) {
-      debugPrint('AudioService: error al reproducir session_complete — $e');
+      await SystemSound.play(type);
+    } on Object catch (error) {
+      debugPrint('No se pudo reproducir el sonido del temporizador: $error');
     }
   }
 
-  /// Sonido al completar un descanso.
-  Future<void> playBreakComplete() async {
-    try {
-      await _player.stop();
-      await _player.play(AssetSource('sounds/break_complete.mp3'));
-    } catch (e) {
-      debugPrint('AudioService: error al reproducir break_complete — $e');
-    }
-  }
-
-  /// Tick opcional por segundo (puede deshabilitarse para ahorrar batería).
-  Future<void> playTick() async {
-    try {
-      await _player.play(AssetSource('sounds/tick.mp3'));
-    } catch (_) {}
-  }
-
-  void dispose() {
-    _player.dispose();
-  }
+  @override
+  Future<void> dispose() async {}
 }

@@ -7,15 +7,14 @@ class WeeklyBarChart extends StatelessWidget {
   final List<DailyStat> stats;
   final Color color;
 
-  const WeeklyBarChart({
-    super.key,
-    required this.stats,
-    required this.color,
-  });
+  const WeeklyBarChart({super.key, required this.stats, required this.color});
 
   @override
   Widget build(BuildContext context) {
-    final maxSessions = stats.fold(0, (m, s) => s.sessions > m ? s.sessions : m);
+    final maxSessions = stats.fold(
+      0,
+      (m, s) => s.sessions > m ? s.sessions : m,
+    );
 
     return SizedBox(
       height: 120,
@@ -51,7 +50,7 @@ class WeeklyBarChart extends StatelessWidget {
                     tween: Tween(begin: 0, end: fraction),
                     duration: const Duration(milliseconds: 600),
                     curve: Curves.easeOutCubic,
-                    builder: (_, value, __) {
+                    builder: (_, value, _) {
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         height: 80 * value + 4,
@@ -59,8 +58,8 @@ class WeeklyBarChart extends StatelessWidget {
                           color: isToday
                               ? color
                               : (stat.sessions > 0
-                                  ? color.withOpacity(0.4)
-                                  : Colors.white.withOpacity(0.06)),
+                                    ? color.withValues(alpha: 0.4)
+                                    : Colors.white.withValues(alpha: 0.06)),
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(4),
                           ),
@@ -77,8 +76,7 @@ class WeeklyBarChart extends StatelessWidget {
                     style: TextStyle(
                       color: isToday ? color : Colors.white38,
                       fontSize: 11,
-                      fontWeight:
-                          isToday ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ],

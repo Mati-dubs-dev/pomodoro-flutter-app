@@ -8,8 +8,8 @@ import 'services/storage_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializar servicios antes de levantar la app
-  await NotificationService.initialize();
+  final notifications = NotificationService();
+  await notifications.initialize();
   final storage = await StorageService.create();
 
   runApp(
@@ -17,6 +17,7 @@ Future<void> main() async {
       overrides: [
         // Inyectar la instancia de StorageService ya inicializada
         storageServiceProvider.overrideWithValue(storage),
+        notificationServiceProvider.overrideWithValue(notifications),
       ],
       child: const PomodoroApp(),
     ),
@@ -55,8 +56,8 @@ class PomodoroApp extends StatelessWidget {
           ),
           trackColor: WidgetStateProperty.resolveWith(
             (states) => states.contains(WidgetState.selected)
-                ? const Color(0xFFFF6B6B).withOpacity(0.4)
-                : Colors.grey.withOpacity(0.3),
+                ? const Color(0xFFFF6B6B).withValues(alpha: 0.4)
+                : Colors.grey.withValues(alpha: 0.3),
           ),
         ),
       ),

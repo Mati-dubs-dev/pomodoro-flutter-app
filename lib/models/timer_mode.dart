@@ -1,8 +1,4 @@
-enum TimerMode {
-  pomodoro,
-  shortBreak,
-  longBreak,
-}
+enum TimerMode { pomodoro, shortBreak, longBreak }
 
 extension TimerModeExtension on TimerMode {
   /// Duración por defecto en segundos (se puede sobreescribir en configuración).

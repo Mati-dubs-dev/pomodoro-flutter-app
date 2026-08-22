@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/haptic_service.dart';
 
 /// Controles del temporizador: reiniciar, iniciar/pausar, saltar.
 class TimerControls extends StatelessWidget {
@@ -25,11 +24,8 @@ class TimerControls extends StatelessWidget {
       children: [
         _CircleButton(
           size: 60,
-          onTap: () {
-            HapticService.buttonPress();
-            onReset();
-          },
-          backgroundColor: Colors.white.withOpacity(0.08),
+          onTap: onReset,
+          backgroundColor: Colors.white.withValues(alpha: 0.08),
           tooltip: 'Reiniciar',
           child: const Icon(Icons.refresh_rounded, color: Colors.white60),
         ),
@@ -54,11 +50,8 @@ class TimerControls extends StatelessWidget {
         const SizedBox(width: 24),
         _CircleButton(
           size: 60,
-          onTap: () {
-            HapticService.buttonPress();
-            onSkip();
-          },
-          backgroundColor: Colors.white.withOpacity(0.08),
+          onTap: onSkip,
+          backgroundColor: Colors.white.withValues(alpha: 0.08),
           tooltip: 'Saltar',
           child: const Icon(Icons.skip_next_rounded, color: Colors.white60),
         ),
@@ -98,9 +91,10 @@ class _CircleButtonState extends State<_CircleButton>
       vsync: this,
       duration: const Duration(milliseconds: 80),
     );
-    _scale = Tween<double>(begin: 1.0, end: 0.92).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
-    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.92,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -130,7 +124,7 @@ class _CircleButtonState extends State<_CircleButton>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: widget.backgroundColor.withOpacity(0.35),
+                  color: widget.backgroundColor.withValues(alpha: 0.35),
                   blurRadius: 16,
                   spreadRadius: 2,
                   offset: const Offset(0, 4),
