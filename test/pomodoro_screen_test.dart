@@ -11,9 +11,7 @@ import 'support/fakes.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('la pantalla principal se adapta a una altura compacta', (
-    tester,
-  ) async {
+  testWidgets('the main screen adapts to a compact height', (tester) async {
     tester.view.physicalSize = const Size(390, 650);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -35,7 +33,7 @@ void main() {
     await tester.pump();
 
     expect(find.text('25:00'), findsOneWidget);
-    expect(find.text('¿En qué vas a enfocarte?'), findsOneWidget);
+    expect(find.text('What will you focus on?'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

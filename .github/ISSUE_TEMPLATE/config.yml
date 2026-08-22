@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Reportar una vulnerabilidad
+  - name: Report a vulnerability
     url: https://github.com/Mati-dubs-dev/pomodoro-flutter-app/security/advisories/new
-    about: Comunica problemas de seguridad mediante un reporte privado.
+    about: Report security issues privately.

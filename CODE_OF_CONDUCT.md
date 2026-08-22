@@ -1,29 +1,29 @@
-# Código de conducta
+# Code of Conduct
 
-## Nuestro compromiso
+## Our commitment
 
-Queremos una comunidad abierta, respetuosa y segura para todas las personas, independientemente de su experiencia, identidad, origen o capacidades.
+We are committed to an open, respectful, and safe community for everyone, regardless of experience, identity, background, or ability.
 
-## Comportamiento esperado
+## Expected behavior
 
-- Comunicar ideas y desacuerdos con respeto.
-- Ofrecer críticas concretas y centradas en el trabajo.
-- Aceptar comentarios y corregir errores de buena fe.
-- Ayudar a quienes están aprendiendo y reconocer sus contribuciones.
-- Proteger la privacidad de otras personas.
+- Communicate ideas and disagreements respectfully.
+- Keep criticism specific and focused on the work.
+- Accept feedback and correct mistakes in good faith.
+- Support people who are learning and recognize their contributions.
+- Protect other people's privacy.
 
-## Comportamiento inaceptable
+## Unacceptable behavior
 
-- Acoso, intimidación, discriminación o ataques personales.
-- Lenguaje sexualizado, insultos o provocaciones deliberadas.
-- Publicación de información privada sin permiso.
-- Spam, manipulación o interrupción persistente.
-- Conducta inapropiada en un entorno profesional.
+- Harassment, intimidation, discrimination, or personal attacks.
+- Sexualized language, insults, or deliberate provocation.
+- Publishing private information without permission.
+- Spam, manipulation, or persistent disruption.
+- Conduct that is inappropriate in a professional environment.
 
-## Aplicación
+## Enforcement
 
-Los mantenedores pueden editar o retirar comentarios, commits, código, issues y otras contribuciones que incumplan estas normas. También pueden limitar la participación cuando sea necesario para proteger a la comunidad.
+Maintainers may edit or remove comments, commits, code, issues, and other contributions that violate these standards. Participation may be restricted when necessary to protect the community.
 
-Para informar una situación, contacta de forma privada al mantenedor mediante su perfil de GitHub. No publiques datos sensibles en un issue. Los reportes se revisarán de manera confidencial y proporcionada.
+Report incidents privately through the maintainer's GitHub profile. Do not post sensitive information in an issue. Reports will be handled confidentially and proportionately.
 
-Este código se aplica en todos los espacios del proyecto y cuando una persona representa públicamente a la comunidad.
+This code applies in all project spaces and whenever someone publicly represents the community.

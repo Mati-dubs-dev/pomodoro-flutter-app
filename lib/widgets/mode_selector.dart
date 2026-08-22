@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/timer_mode.dart';
 
-/// Selector de modo (Pomodoro / Descanso corto / Descanso largo).
-/// La etiqueta activa usa el color del modo actual; las inactivas quedan tenues.
+/// Mode selector (Pomodoro / Short break / Long break).
+/// The active label uses the current mode color; inactive labels are muted.
 class ModeSelector extends StatelessWidget {
   final TimerMode currentMode;
   final ValueChanged<TimerMode> onModeChanged;

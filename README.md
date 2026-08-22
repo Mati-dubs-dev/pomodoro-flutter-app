@@ -1,195 +1,193 @@
 # Pomodoro Pro
 
 <p align="center">
-  <img src="assets/app_icon.png" width="160" alt="Icono de Pomodoro Pro">
+  <img src="assets/app_icon.png" width="160" alt="Pomodoro Pro icon">
 </p>
 
 <p align="center">
-  Temporizador Pomodoro multiplataforma creado con Flutter y Riverpod para organizar sesiones de concentración, descansos y objetivos diarios.
+  A privacy-friendly, cross-platform Pomodoro timer built with Flutter and Riverpod.
 </p>
 
 <p align="center">
-  <a href="https://github.com/Mati-dubs-dev/pomodoro-flutter-app/actions/workflows/ci.yml"><img src="https://github.com/Mati-dubs-dev/pomodoro-flutter-app/actions/workflows/ci.yml/badge.svg" alt="Estado de CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/licencia-MIT-green.svg" alt="Licencia MIT"></a>
+  <a href="https://github.com/Mati-dubs-dev/pomodoro-flutter-app/actions/workflows/ci.yml"><img src="https://github.com/Mati-dubs-dev/pomodoro-flutter-app/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/Flutter-3.47.1-02569B?logo=flutter" alt="Flutter 3.47.1">
   <img src="https://img.shields.io/badge/Dart-3.13.1-0175C2?logo=dart" alt="Dart 3.13.1">
 </p>
 
-## Descripción
+## Overview
 
-Pomodoro Pro ayuda a trabajar en intervalos de concentración y descanso sin depender de una cuenta ni de servicios externos. Cada sesión puede asociarse a una tarea, el temporizador se recupera al volver a abrir la aplicación y las estadísticas permanecen almacenadas localmente.
+Pomodoro Pro helps you organize focused work and recovery breaks without accounts or external services. Each focus session can be linked to a task, active timers survive application restarts, and productivity statistics remain stored locally on the device.
 
-El proyecto está preparado para Android, iOS, web, Windows, macOS y Linux. Las funciones relacionadas con notificaciones dependen de las capacidades y permisos de cada plataforma.
+The project targets Android, iOS, web, Windows, macOS, and Linux. System notification support depends on each platform's capabilities and permissions.
 
-## Características
+## Features
 
-- Modos de concentración, descanso corto y descanso largo.
-- Duraciones, objetivo diario y ciclos configurables.
-- Tarea o intención asociada a cada sesión de concentración.
-- Pausa, reanudación, reinicio, salto y extensión de cinco minutos.
-- Restauración del temporizador después de cerrar la aplicación.
-- Reconciliación de sesiones finalizadas mientras la aplicación estaba cerrada.
-- Notificaciones locales programadas en Android, iOS y macOS.
-- Controles independientes para sonido, vibración y notificaciones.
-- Inicio automático opcional de descansos y sesiones de concentración.
-- Historial local editable con hasta 300 sesiones.
-- Estadísticas diarias y semanales, racha, mejor día y distribución por tarea.
-- Interfaz adaptable a pantallas compactas y de escritorio.
-- Etiquetas semánticas y anuncios para tecnologías de asistencia.
-- Tema visual e iconos propios de Pomodoro Pro.
+- Configurable focus, short-break, and long-break modes.
+- Custom daily goal and long-break interval.
+- A task or intention for every focus session.
+- Pause, resume, reset, skip, and five-minute extension actions.
+- Timer restoration after closing the application.
+- Reconciliation of sessions completed while the app was closed.
+- Scheduled local notifications on Android, iOS, and macOS.
+- Independent sound, vibration, and notification preferences.
+- Optional automatic start for focus sessions and breaks.
+- Editable local history with up to 300 focus sessions.
+- Daily and weekly statistics, streaks, best day, and focus by task.
+- Responsive layouts for compact and desktop screens.
+- Semantic labels and live announcements for assistive technologies.
+- Custom Pomodoro Pro identity and platform icons.
 
-## Tecnologías principales
+## Technology
 
-- Flutter y Dart para la interfaz multiplataforma.
-- Riverpod para estado y composición de dependencias.
-- SharedPreferences para persistencia local.
-- flutter_local_notifications y timezone para recordatorios del sistema.
-- flutter_test para pruebas unitarias y de widgets.
-- GitHub Actions para formato, análisis, pruebas y compilación web.
+- Flutter and Dart for the cross-platform UI.
+- Riverpod for state management and dependency composition.
+- SharedPreferences for local persistence.
+- flutter_local_notifications and timezone for system reminders.
+- flutter_test for unit and widget testing.
+- GitHub Actions for formatting, analysis, tests, and web builds.
 
-## Requisitos
+## Requirements
 
-- Flutter 3.47.1 o una versión estable compatible.
-- Dart 3.11.4 o posterior, según `pubspec.yaml`.
-- Android Studio y Android SDK para Android.
-- Xcode y CocoaPods en macOS para iOS y macOS.
-- Visual Studio con la carga de trabajo de C++ para Windows.
-- Chrome para ejecutar la versión web.
+- Flutter 3.47.1 or a compatible stable release.
+- Dart 3.11.4 or later, as declared in `pubspec.yaml`.
+- Android Studio and the Android SDK for Android development.
+- Xcode and CocoaPods on macOS for iOS and macOS.
+- Visual Studio with the C++ desktop workload for Windows.
+- Chrome for web development.
 
-Comprueba tu entorno antes de comenzar:
+Verify your environment first:
 
 ```bash
 flutter doctor -v
 ```
 
-## Instalación
+## Getting started
 
-1. Clona el repositorio.
+1. Clone the repository.
 
    ```bash
    git clone https://github.com/Mati-dubs-dev/pomodoro-flutter-app.git
    cd pomodoro-flutter-app
    ```
 
-2. Instala las dependencias.
+2. Install dependencies.
 
    ```bash
    flutter pub get
    ```
 
-3. Consulta los dispositivos disponibles y ejecuta la aplicación.
+3. List available targets and run the app.
 
    ```bash
    flutter devices
    flutter run
    ```
 
-Puedes elegir un destino explícito con `flutter run -d chrome`, `flutter run -d windows` o el identificador de un emulador o dispositivo.
+Use `flutter run -d chrome`, `flutter run -d windows`, or a device identifier to select a specific target.
 
-> `flutter pub get` debe ejecutarse dentro de esta carpeta, donde se encuentra `pubspec.yaml`. Si aparece `No pubspec.yaml file found`, verifica el directorio actual con `pwd` o `Get-Location`.
+> Run Flutter commands from this directory, where `pubspec.yaml` is located. If Flutter reports `No pubspec.yaml file found`, check your current directory with `pwd` or `Get-Location`.
 
-## Comandos útiles
+## Quality and build commands
 
 ```bash
-# Formato, análisis y pruebas
+# Formatting, static analysis, and tests
 dart format --output=none --set-exit-if-changed lib test
 flutter analyze
 flutter test
 
-# Cobertura
+# Test coverage
 flutter test --coverage
 
-# Artefactos de producción
+# Production artifacts
 flutter build apk --release
 flutter build appbundle --release
 flutter build web --release
 flutter build windows --release
 ```
 
-Las compilaciones de iOS y macOS deben realizarse en macOS. La firma y las credenciales de las tiendas no están incluidas en el repositorio.
+iOS and macOS builds require macOS. Store signing keys and distribution credentials are intentionally excluded from the repository.
 
-## Arquitectura
-
-El proyecto usa una separación sencilla por responsabilidades:
+## Architecture
 
 ```text
 lib/
-├── models/       Entidades persistidas y modos del temporizador
-├── providers/    Estado, reglas de negocio y métricas derivadas
-├── screens/      Pantallas principales de la aplicación
-├── services/     Temporizador, almacenamiento, audio y notificaciones
-├── utils/        Formateadores y utilidades puras
-├── widgets/      Componentes visuales reutilizables
-└── main.dart     Inicialización e inyección de servicios
+├── models/       Persisted entities and timer modes
+├── providers/    Application state and derived metrics
+├── screens/      Main application screens
+├── services/     Timer, storage, audio, haptics, and notifications
+├── utils/        Pure formatting utilities
+├── widgets/      Reusable visual components
+└── main.dart     Initialization and service injection
 ```
 
 ```text
-Interfaz → PomodoroNotifier → TimerService
-                         ├── StorageService
-                         ├── NotificationService
-                         ├── AudioService
-                         └── HapticService
+UI → PomodoroNotifier → TimerService
+                    ├── StorageService
+                    ├── NotificationService
+                    ├── AudioService
+                    └── HapticService
 ```
 
-`PomodoroNotifier` concentra las reglas de la sesión. `TimerService` calcula el tiempo restante a partir de una hora de finalización, evitando depender únicamente del número de ticks. `StorageService` conserva el snapshot del temporizador, preferencias, estadísticas e historial. Los servicios se inyectan mediante providers para facilitar las pruebas con dobles controlados.
+`PomodoroNotifier` owns the session rules. `TimerService` derives remaining time from an absolute end time instead of relying only on tick counts. `StorageService` persists timer snapshots, preferences, statistics, and history. Services are injected through providers so tests can use controlled fakes.
 
-Consulta [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) para conocer el flujo, los modelos persistidos y los puntos de extensión.
+Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the complete data flow, persistence model, and extension points.
 
-## Persistencia y privacidad
+## Persistence and privacy
 
-Todos los datos funcionales se almacenan en el dispositivo mediante SharedPreferences. El proyecto no incluye autenticación, analítica, publicidad, seguimiento ni sincronización en la nube.
+All functional data is stored on the device with SharedPreferences. The project does not include authentication, analytics, advertising, tracking, or cloud synchronization.
 
-Se conservan preferencias, el estado del temporizador, estadísticas de hasta 90 días, hasta 300 sesiones individuales y el texto de las tareas. Desinstalar la aplicación o borrar sus datos elimina esta información.
+Stored data includes preferences, the timer snapshot, up to 90 days of statistics, up to 300 focus sessions, and user-entered task names. Uninstalling the app or clearing its data removes this information.
 
-## Notificaciones
+## Notifications
 
-Android solicita permiso para notificaciones y, cuando corresponde, para alarmas exactas. Si una alarma exacta no está disponible, utiliza una programación inexacta. iOS y macOS solicitan autorización mediante sus APIs del sistema.
+Android requests notification permission and, when applicable, exact-alarm access. The app falls back to inexact scheduling when exact alarms are unavailable. iOS and macOS request authorization through their system APIs.
 
-En web, Windows y Linux el temporizador funciona, pero la implementación actual no programa notificaciones locales del sistema. Las pruebas de suspensión, cierre forzado, reinicio y cambio de fecha deben realizarse en dispositivos reales antes de publicar.
+The timer works on web, Windows, and Linux, but the current implementation does not schedule native local notifications there. Test sleep, forced shutdown, reboot, and date rollover on physical devices before releasing.
 
-## Pruebas
+## Tests
 
-La suite cubre cambio de día, historial, restauración de temporizadores activos y pausados, reconciliación de sesiones vencidas, preferencias de audio y notificaciones, y comportamiento en pantallas compactas.
+The suite covers date rollover, history updates, active and paused timer restoration, expired-session reconciliation, independent sound and notification preferences, and compact layouts.
 
-Los dobles están en `test/support/fakes.dart`. Al modificar reglas del temporizador o persistencia, añade el caso correspondiente y evita utilizar esperas reales en los tests.
+Test doubles live in `test/support/fakes.dart`. Add a regression test whenever timer or persistence rules change, and avoid real-time waits in tests.
 
-## Generación de iconos
+## Regenerating icons
 
-El archivo fuente está en `assets/app_icon.png`. Para regenerar los iconos:
+The source image is `assets/app_icon.png`.
 
 ```bash
 dart run flutter_launcher_icons
 ```
 
-## Cómo contribuir
+## Contributing
 
-Las contribuciones son bienvenidas: correcciones, accesibilidad, pruebas, traducciones y nuevas funciones.
+Contributions are welcome, including bug fixes, accessibility improvements, tests, translations, and new features.
 
-1. Lee [CONTRIBUTING.md](CONTRIBUTING.md).
-2. Busca un issue existente o abre uno describiendo la propuesta.
-3. Crea una rama desde `main`.
-4. Mantén cada pull request enfocado en un solo objetivo.
-5. Ejecuta formato, análisis y pruebas antes de enviarlo.
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md).
+2. Search existing issues or open one that explains your proposal.
+3. Create a branch from `main`.
+4. Keep each pull request focused on one goal.
+5. Run formatting, analysis, and tests before submitting.
 
-Al participar aceptas el [Código de conducta](CODE_OF_CONDUCT.md). Los problemas de seguridad deben comunicarse siguiendo [SECURITY.md](SECURITY.md), no mediante un issue público.
+Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). Report security concerns according to [SECURITY.md](SECURITY.md), not through public issues.
 
-## Publicación
+## Releases
 
-Antes de crear una versión consulta [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md). Incluye validaciones automáticas, pruebas reales, permisos, firma, privacidad, versión y despliegue gradual.
+Complete [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) before publishing a version. It covers automated checks, physical-device testing, permissions, signing, privacy, versioning, and staged rollout.
 
-## Ideas para futuras contribuciones
+## Roadmap ideas
 
-- Internacionalización completa con ARB.
-- Exportación e importación del historial.
-- Sincronización opcional entre dispositivos.
-- Notificaciones nativas para Windows y Linux.
-- Más pruebas de integración y golden tests.
-- Distribución automatizada de versiones firmadas.
+- ARB-based internationalization.
+- History import and export.
+- Optional device synchronization.
+- Native notifications for Windows and Linux.
+- More integration and golden tests.
+- Automated signed releases.
 
-## Licencia
+## License
 
-Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE).
+Distributed under the MIT License. See [LICENSE](LICENSE).
 
-## Autor
+## Author
 
-Creado y mantenido por [Mati-dubs-dev](https://github.com/Mati-dubs-dev).
+Created and maintained by [Mati-dubs-dev](https://github.com/Mati-dubs-dev).

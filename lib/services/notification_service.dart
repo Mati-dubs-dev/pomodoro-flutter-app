@@ -19,8 +19,8 @@ abstract interface class PomodoroNotifications {
 class NotificationService implements PomodoroNotifications {
   static const timerNotificationId = 100;
   static const _channelId = 'pomodoro_timer';
-  static const _channelName = 'Temporizador Pomodoro';
-  static const _channelDesc = 'Avisos de sesiones y descansos completados';
+  static const _channelName = 'Pomodoro Timer';
+  static const _channelDesc = 'Completed focus session and break alerts';
 
   final FlutterLocalNotificationsPlugin _plugin;
 
@@ -119,10 +119,10 @@ class NotificationService implements PomodoroNotifications {
     if (!_isSupported) return;
 
     final isFocus = mode == TimerMode.pomodoro;
-    final title = isFocus ? '¡Sesión completada!' : '¡Descanso terminado!';
+    final title = isFocus ? 'Focus session complete!' : 'Break complete!';
     final body = isFocus
-        ? 'Llevas ${completedSessions + 1} sesiones hoy. Es hora de descansar.'
-        : 'Tu siguiente bloque de foco está listo.';
+        ? 'You have completed ${completedSessions + 1} sessions today. Time for a break.'
+        : 'Your next focus block is ready.';
 
     final scheduledTime = tz.TZDateTime.from(endTime, tz.local);
     try {

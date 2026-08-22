@@ -18,7 +18,7 @@ class AudioService implements PomodoroAudio {
     try {
       await SystemSound.play(type);
     } on Object catch (error) {
-      debugPrint('No se pudo reproducir el sonido del temporizador: $error');
+      debugPrint('Could not play the timer sound: $error');
     }
   }
 

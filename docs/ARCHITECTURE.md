@@ -1,67 +1,67 @@
-# Arquitectura de Pomodoro Pro
+# Pomodoro Pro architecture
 
-Este documento permite modificar el proyecto sin romper la restauración del temporizador ni las estadísticas.
+This document explains how to change the project without breaking timer restoration or statistics.
 
-## Capas
+## Layers
 
-### Interfaz
+### UI
 
-Las pantallas de `lib/screens` observan providers y envían acciones al notifier. Los widgets reutilizables viven en `lib/widgets`. La interfaz no escribe directamente en SharedPreferences ni programa notificaciones.
+Screens in `lib/screens` watch providers and send actions to the notifier. Reusable widgets live in `lib/widgets`. UI code never writes directly to SharedPreferences or schedules notifications.
 
-### Estado y reglas de negocio
+### State and business rules
 
-`PomodoroNotifier` coordina modo, tiempo restante, tarea, ciclos y finalización. También decide cuándo persistir, emitir señales de finalización o iniciar automáticamente el siguiente modo.
+`PomodoroNotifier` coordinates mode, remaining time, task, cycles, and completion. It decides when to persist, emit completion signals, or automatically start the next mode.
 
-`StatsProvider` transforma el historial en métricas: semana actual y anterior, racha, mejor día y agrupación por tarea.
+`StatsProvider` converts stored history into current- and previous-week metrics, streaks, best-day information, and task summaries.
 
-### Servicios
+### Services
 
-- `TimerService` mantiene el reloj y calcula el tiempo restante usando una fecha de finalización.
-- `StorageService` administra preferencias, snapshots, estadísticas e historial.
-- `NotificationService` solicita permisos y programa o cancela avisos.
-- `AudioService` y `HapticService` aíslan efectos secundarios opcionales.
+- `TimerService` runs the periodic clock and calculates remaining time from an absolute end time.
+- `StorageService` manages preferences, snapshots, daily statistics, and history.
+- `NotificationService` requests permission and schedules or cancels system notifications.
+- `AudioService` and `HapticService` isolate optional side effects.
 
-Las interfaces permiten sustituir servicios reales por fakes en pruebas.
+Service interfaces allow tests to replace real implementations with fakes.
 
-## Modelos persistidos
+## Persisted models
 
-`TimerSnapshot` representa un temporizador activo o pausado. Contiene modo, tarea, estado de pausa, segundos restantes y fecha de finalización cuando corresponde.
+`TimerSnapshot` represents an active or paused timer and contains its mode, task, pause state, remaining seconds, and end time when applicable.
 
-`FocusSession` representa una sesión completada: identificador, fecha, minutos y tarea. El historial se limita a 300 elementos.
+`FocusSession` represents a completed session with an identifier, completion time, focus minutes, and task. History is limited to 300 entries.
 
-`DailyStat` almacena agregados por fecha. Se conservan hasta 90 días y el cambio de día archiva los contadores anteriores antes de iniciar el nuevo registro.
+`DailyStat` stores date-based aggregates. The app keeps up to 90 days and archives the previous day's counters before starting a new record.
 
-Al modificar modelos, conserva valores por defecto para claves ausentes y considera los datos escritos por versiones anteriores.
+When changing these models, provide defaults for missing keys and remain compatible with data written by earlier versions.
 
-## Ciclo del temporizador
+## Timer lifecycle
 
-1. El usuario selecciona un modo e inicia la sesión.
-2. El notifier calcula la hora de finalización y guarda un snapshot.
-3. El servicio actualiza la interfaz a partir del reloj actual.
-4. Una pausa reemplaza la fecha por segundos restantes.
-5. Al reanudar se calcula una nueva fecha de finalización.
-6. Al completar foco se registra la sesión y se actualizan estadísticas.
-7. La política de inicio automático decide el siguiente modo.
+1. The user selects a mode and starts the timer.
+2. The notifier calculates the end time and saves a snapshot.
+3. The service updates UI state from the current clock.
+4. Pausing replaces the end time with remaining seconds.
+5. Resuming calculates a new end time.
+6. Completing focus records history and updates statistics.
+7. Auto-start preferences determine the next running mode.
 
-Al arrancar, un snapshot vencido se reconcilia una sola vez. Esto evita perder sesiones terminadas con la aplicación cerrada y evita contarlas dos veces.
+At startup, an expired snapshot is reconciled exactly once. This preserves sessions completed while the app was closed without counting them twice.
 
-## Notificaciones
+## Notifications
 
-Se programan al iniciar o reanudar y se cancelan al pausar, reiniciar, saltar o cambiar de modo. Android intenta alarmas exactas y utiliza programación inexacta si el sistema no lo permite.
+A notification is scheduled on start or resume and cancelled on pause, reset, skip, or mode change. Android attempts exact alarms and falls back to inexact scheduling when required.
 
-Los permisos se solicitan como consecuencia de una acción del usuario. Una plataforma nueva debe implementar la interfaz sin introducir dependencias en la lógica central.
+Permission requests must follow a user action. New platform implementations should satisfy the service interface without coupling platform code to business rules.
 
-## Estrategia de pruebas
+## Testing strategy
 
-Las pruebas inyectan un reloj controlado, un driver de temporizador y servicios falsos. Así pueden avanzar el estado sin esperar minutos reales y verificar notificaciones, audio y persistencia.
+Tests inject a controlled clock, timer driver, and fake side-effect services. This advances state without real-time waits and makes notification, audio, and persistence behavior deterministic.
 
-Los cambios en finalización, restauración, cambio de fecha o historial deben incluir una prueba de regresión.
+Changes to completion, restoration, date rollover, or history require a regression test.
 
-## Principios para cambios futuros
+## Design principles
 
-- Mantener la lógica determinista y separada de la interfaz.
-- Tratar almacenamiento y notificaciones como efectos externos inyectables.
-- Usar tiempo absoluto en lugar de depender solo de ticks.
-- Mantener compatibilidad hacia atrás en datos persistidos.
-- Considerar accesibilidad, pantallas compactas y diferencias de plataforma.
-- Documentar permisos nuevos y su impacto en privacidad.
+- Keep business logic deterministic and separate from the UI.
+- Treat storage and notifications as injected side effects.
+- Use absolute time instead of relying only on ticks.
+- Preserve backward compatibility for persisted data.
+- Consider accessibility, compact screens, and platform differences.
+- Document new permissions and privacy impact.

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/daily_stat.dart';
 
-/// Gráfico de barras simple para el historial semanal.
-/// No requiere ningún paquete externo.
+/// Simple weekly-history bar chart with no external chart package.
 class WeeklyBarChart extends StatelessWidget {
   final List<DailyStat> stats;
   final Color color;
@@ -31,7 +30,7 @@ class WeeklyBarChart extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  // Número de sesiones (solo si > 0)
+                  // Session count (only when greater than zero).
                   if (stat.sessions > 0)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4),
@@ -45,7 +44,7 @@ class WeeklyBarChart extends StatelessWidget {
                       ),
                     ),
 
-                  // Barra animada
+                  // Animated bar.
                   TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0, end: fraction),
                     duration: const Duration(milliseconds: 600),
@@ -70,7 +69,7 @@ class WeeklyBarChart extends StatelessWidget {
 
                   const SizedBox(height: 6),
 
-                  // Etiqueta del día
+                  // Weekday label.
                   Text(
                     stat.weekdayLabel,
                     style: TextStyle(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Controles del temporizador: reiniciar, iniciar/pausar, saltar.
+/// Timer controls: reset, start or pause, and skip.
 class TimerControls extends StatelessWidget {
   final bool isRunning;
   final VoidCallback onStartPause;
@@ -26,7 +26,7 @@ class TimerControls extends StatelessWidget {
           size: 60,
           onTap: onReset,
           backgroundColor: Colors.white.withValues(alpha: 0.08),
-          tooltip: 'Reiniciar',
+          tooltip: 'Reset',
           child: const Icon(Icons.refresh_rounded, color: Colors.white60),
         ),
         const SizedBox(width: 24),
@@ -34,7 +34,7 @@ class TimerControls extends StatelessWidget {
           size: 84,
           onTap: onStartPause,
           backgroundColor: color,
-          tooltip: isRunning ? 'Pausar' : 'Iniciar',
+          tooltip: isRunning ? 'Pause' : 'Start',
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             transitionBuilder: (child, anim) =>
@@ -52,7 +52,7 @@ class TimerControls extends StatelessWidget {
           size: 60,
           onTap: onSkip,
           backgroundColor: Colors.white.withValues(alpha: 0.08),
-          tooltip: 'Saltar',
+          tooltip: 'Skip',
           child: const Icon(Icons.skip_next_rounded, color: Colors.white60),
         ),
       ],

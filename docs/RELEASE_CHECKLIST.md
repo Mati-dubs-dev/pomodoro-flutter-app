@@ -1,38 +1,38 @@
-# Checklist de lanzamiento
+# Release checklist
 
-## Calidad
+## Automated quality
 
 - [ ] `dart format --output=none --set-exit-if-changed lib test`
 - [ ] `flutter analyze`
-- [ ] `flutter test`
+- [ ] `flutter test --coverage`
 - [ ] `flutter build web --release`
-- [ ] `flutter build appbundle --release`
-- [ ] `flutter build ipa --release` desde macOS
+- [ ] `flutter build apk --release` or `flutter build appbundle --release`
+- [ ] `flutter build windows --release`
+- [ ] Build iOS and macOS on a Mac
 
-## Pruebas en dispositivos reales
+## Physical-device verification
 
-- [ ] Android 13 o posterior: aceptar y rechazar notificaciones
-- [ ] iPhone: aceptar y rechazar notificaciones
-- [ ] Iniciar, pausar, reanudar, reiniciar y saltar cada modo
-- [ ] Bloquear pantalla y comprobar el aviso al finalizar
-- [ ] Cerrar la app durante una sesión y abrirla antes y después del final
-- [ ] Reiniciar un Android durante una sesión y comprobar reprogramación
-- [ ] Completar una sesión antes y después de medianoche
-- [ ] Validar sonido, vibración y notificación por separado
-- [ ] Probar texto del sistema al 200 %, lector de pantalla y orientación
+- [ ] Start, pause, resume, reset, and skip every mode
+- [ ] Verify short- and long-break automatic start rules
+- [ ] Close the app during a session and reopen before and after completion
+- [ ] Reboot Android during a session and verify notification behavior
+- [ ] Complete sessions before and after midnight
+- [ ] Validate sound, haptics, and notifications independently
+- [ ] Test 200% text scaling, screen readers, and orientation changes
+- [ ] Deny and later enable notification permissions
 
-## Identidad y tiendas
+## Store preparation
 
-- [ ] Confirmar `com.matidubs.pomodoropro` como identificador definitivo
-- [ ] Crear y guardar de forma segura el keystore de Android
-- [ ] Configurar firma de distribución y perfiles de iOS
-- [ ] Preparar capturas, descripción, política de privacidad y correo de soporte
-- [ ] Revisar categorías de privacidad: los datos permanecen en el dispositivo
-- [ ] Incrementar `version` en `pubspec.yaml`
+- [ ] Update `version` in `pubspec.yaml`
+- [ ] Configure Android release signing
+- [ ] Configure iOS distribution signing and profiles
+- [ ] Prepare screenshots, description, privacy policy, and support email
+- [ ] Confirm privacy declarations: functional data remains on-device
+- [ ] Review application IDs and display names on every platform
 
-## Publicación gradual
+## Staged rollout
 
-- [ ] Publicar primero en canal interno/TestFlight
-- [ ] Validar notificaciones en distintos fabricantes Android
-- [ ] Revisar errores y comentarios antes de producción
-- [ ] Conservar una versión anterior para rollback
+- [ ] Publish to an internal or closed-testing track
+- [ ] Verify installation and upgrades from the previous version
+- [ ] Review errors and tester feedback before production
+- [ ] Keep the previous release available for rollback

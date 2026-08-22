@@ -12,7 +12,7 @@ class FocusSession {
   });
 
   String get displayTask =>
-      task.trim().isEmpty ? 'Sesión sin tarea' : task.trim();
+      task.trim().isEmpty ? 'Untitled session' : task.trim();
 
   FocusSession copyWith({String? task}) {
     return FocusSession(
