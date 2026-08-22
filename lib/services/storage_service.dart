@@ -1,16 +1,20 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/daily_stat.dart';
 
-/// Servicio de persistencia usando SharedPreferences.
-/// Los valores de configuración y sesión se cachean en memoria al inicializar,
-/// eliminando lecturas síncronas repetidas a SharedPreferences en cada getter.
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/daily_stat.dart';
+import '../models/focus_session.dart';
+import '../models/timer_mode.dart';
+import '../models/timer_snapshot.dart';
+
+typedef Clock = DateTime Function();
+
 class StorageService {
-  // ── Claves ─────────────────────────────────────────────────────────────────
   static const _kSessions = 'completed_sessions';
   static const _kLastDate = 'last_date';
   static const _kFocusMinutes = 'focus_minutes_today';
-  static const _kWeeklyStats = 'weekly_stats';
+  static const _kDailyStats = 'weekly_stats';
+  static const _kFocusSessions = 'focus_sessions_v1';
 
   static const _kPomodoroDuration = 'pomodoro_duration';
   static const _kShortBreakDuration = 'short_break_duration';
@@ -19,14 +23,15 @@ class StorageService {
   static const _kAutoStartBreaks = 'auto_start_breaks';
   static const _kAutoStartPomodoros = 'auto_start_pomodoros';
   static const _kSoundEnabled = 'sound_enabled';
+  static const _kNotificationsEnabled = 'notifications_enabled';
+  static const _kHapticsEnabled = 'haptics_enabled';
 
-  // ── BUG 4 FIX: persistencia del endTime para sobrevivir cierres de app ────
-  static const _kTimerEndTime = 'timer_end_time';
-  // ─────────────────────────────────────────────────────────────────────────
+  static const _kTimerSnapshot = 'timer_snapshot_v1';
+  static const _kLegacyTimerEndTime = 'timer_end_time';
 
   final SharedPreferences _prefs;
+  final Clock _now;
 
-  // ── BUG 3 FIX: cache en memoria — evita leer SharedPreferences en cada getter
   late int _pomodoroDuration;
   late int _shortBreakDuration;
   late int _longBreakDuration;
@@ -34,18 +39,25 @@ class StorageService {
   late bool _autoStartBreaks;
   late bool _autoStartPomodoros;
   late bool _soundEnabled;
+  late bool _notificationsEnabled;
+  late bool _hapticsEnabled;
 
-  // Cache de sesiones del día
   late int _completedSessions;
   late int _focusMinutesToday;
   late String? _lastDate;
-  // ─────────────────────────────────────────────────────────────────────────
+  final Map<String, dynamic> _dailyStats = {};
+  final List<FocusSession> _focusSessions = [];
 
-  StorageService._(this._prefs) {
-    _loadCache();
+  StorageService._(this._prefs, this._now);
+
+  static Future<StorageService> create({Clock? now}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final service = StorageService._(prefs, now ?? DateTime.now);
+    service._loadCache();
+    await service.rolloverIfNeeded();
+    return service;
   }
 
-  /// Carga todos los valores en memoria una única vez al construir el servicio.
   void _loadCache() {
     _pomodoroDuration = _prefs.getInt(_kPomodoroDuration) ?? 25;
     _shortBreakDuration = _prefs.getInt(_kShortBreakDuration) ?? 5;
@@ -54,138 +66,221 @@ class StorageService {
     _autoStartBreaks = _prefs.getBool(_kAutoStartBreaks) ?? false;
     _autoStartPomodoros = _prefs.getBool(_kAutoStartPomodoros) ?? false;
     _soundEnabled = _prefs.getBool(_kSoundEnabled) ?? true;
+    _notificationsEnabled = _prefs.getBool(_kNotificationsEnabled) ?? true;
+    _hapticsEnabled = _prefs.getBool(_kHapticsEnabled) ?? true;
 
     _lastDate = _prefs.getString(_kLastDate);
-    if (_lastDate == _todayKey) {
-      _completedSessions = _prefs.getInt(_kSessions) ?? 0;
-      _focusMinutesToday = _prefs.getInt(_kFocusMinutes) ?? 0;
-    } else {
-      _completedSessions = 0;
-      _focusMinutesToday = 0;
-    }
-  }
+    _completedSessions = _prefs.getInt(_kSessions) ?? 0;
+    _focusMinutesToday = _prefs.getInt(_kFocusMinutes) ?? 0;
 
-  static Future<StorageService> create() async {
-    final prefs = await SharedPreferences.getInstance();
-    return StorageService._(prefs);
-  }
-
-  String get _todayKey => _dateKey(DateTime.now());
-  String _dateKey(DateTime d) => d.toIso8601String().substring(0, 10);
-
-  // ── Sesiones ───────────────────────────────────────────────────────────────
-
-  /// Sesiones completadas hoy. Devuelve el valor cacheado (0 si cambió el día).
-  int get completedSessions => _completedSessions;
-
-  /// Minutos de foco acumulados hoy. Devuelve el valor cacheado.
-  int get focusMinutesToday => _focusMinutesToday;
-
-  /// Registra la finalización de una sesión Pomodoro.
-  Future<void> recordCompletedSession({
-    required int totalSessions,
-    required int pomodoroMinutes,
-  }) async {
-    final today = _todayKey;
-    final previousDate = _lastDate;
-
-    // Si cambió el día, archivar datos previos en el historial
-    if (previousDate != null && previousDate != today) {
-      await _archiveDayStats(previousDate);
-    }
-
-    final prevMinutes = (previousDate == today) ? _focusMinutesToday : 0;
-    final newMinutes = prevMinutes + pomodoroMinutes;
-
-    await _prefs.setString(_kLastDate, today);
-    await _prefs.setInt(_kSessions, totalSessions);
-    await _prefs.setInt(_kFocusMinutes, newMinutes);
-
-    // Actualizar cache
-    _lastDate = today;
-    _completedSessions = totalSessions;
-    _focusMinutesToday = newMinutes;
-
-    // Actualizar también el historial semanal con datos de hoy
-    await _updateWeeklyStat(today, totalSessions, newMinutes);
-  }
-
-  Future<void> _archiveDayStats(String dateKey) async {
-    await _updateWeeklyStat(dateKey, _completedSessions, _focusMinutesToday);
-  }
-
-  Future<void> _updateWeeklyStat(
-      String dateKey, int sessions, int minutes) async {
-    final raw = _prefs.getString(_kWeeklyStats);
-    final Map<String, dynamic> stats =
-        raw != null ? Map.from(jsonDecode(raw)) : {};
-
-    stats[dateKey] = {'sessions': sessions, 'minutes': minutes};
-
-    // Conservar solo los últimos 30 días
-    final keys = stats.keys.toList()..sort();
-    if (keys.length > 30) {
-      for (final k in keys.take(keys.length - 30)) {
-        stats.remove(k);
+    final rawStats = _prefs.getString(_kDailyStats);
+    if (rawStats != null) {
+      try {
+        _dailyStats.addAll(Map<String, dynamic>.from(jsonDecode(rawStats)));
+      } on Object {
+        _dailyStats.clear();
       }
     }
 
-    await _prefs.setString(_kWeeklyStats, jsonEncode(stats));
-  }
-
-  /// Devuelve las estadísticas de los últimos 7 días (hoy incluido).
-  List<DailyStat> getWeeklyStats() {
-    final raw = _prefs.getString(_kWeeklyStats);
-    final Map<String, dynamic> stats =
-        raw != null ? Map.from(jsonDecode(raw)) : {};
-
-    final today = DateTime.now();
-    return List.generate(7, (i) {
-      final date = today.subtract(Duration(days: 6 - i));
-      final key = _dateKey(date);
-
-      if (i == 6) {
-        return DailyStat(
-          date: date,
-          sessions: _completedSessions,
-          focusMinutes: _focusMinutesToday,
+    final rawSessions = _prefs.getString(_kFocusSessions);
+    if (rawSessions != null) {
+      try {
+        final decoded = jsonDecode(rawSessions) as List<dynamic>;
+        _focusSessions.addAll(
+          decoded.map(
+            (item) =>
+                FocusSession.fromJson(Map<String, dynamic>.from(item as Map)),
+          ),
         );
+      } on Object {
+        _focusSessions.clear();
       }
+    }
+  }
 
-      final data = stats[key];
+  String get _todayKey => _dateKey(_now());
+  String _dateKey(DateTime date) =>
+      '${date.year.toString().padLeft(4, '0')}-'
+      '${date.month.toString().padLeft(2, '0')}-'
+      '${date.day.toString().padLeft(2, '0')}';
+
+  Future<bool> rolloverIfNeeded() async {
+    final today = _todayKey;
+    if (_lastDate == today) return false;
+
+    final previousDate = _lastDate;
+    if (previousDate != null) {
+      _dailyStats[previousDate] = {
+        'sessions': _completedSessions,
+        'minutes': _focusMinutesToday,
+      };
+    }
+
+    _lastDate = today;
+    _completedSessions = 0;
+    _focusMinutesToday = 0;
+
+    await Future.wait([
+      _prefs.setString(_kLastDate, today),
+      _prefs.setInt(_kSessions, 0),
+      _prefs.setInt(_kFocusMinutes, 0),
+      _saveDailyStats(),
+    ]);
+    return true;
+  }
+
+  int get completedSessions => _completedSessions;
+  int get focusMinutesToday => _focusMinutesToday;
+  List<FocusSession> get focusSessions => List.unmodifiable(_focusSessions);
+
+  Future<FocusSession> recordCompletedSession({
+    required int pomodoroMinutes,
+    required String task,
+  }) async {
+    await rolloverIfNeeded();
+    final completedAt = _now();
+    _completedSessions += 1;
+    _focusMinutesToday += pomodoroMinutes;
+
+    final session = FocusSession(
+      id: '${completedAt.microsecondsSinceEpoch}-${_focusSessions.length}',
+      completedAt: completedAt,
+      focusMinutes: pomodoroMinutes,
+      task: task.trim(),
+    );
+    _focusSessions.insert(0, session);
+    if (_focusSessions.length > 300) {
+      _focusSessions.removeRange(300, _focusSessions.length);
+    }
+
+    _dailyStats[_todayKey] = {
+      'sessions': _completedSessions,
+      'minutes': _focusMinutesToday,
+    };
+
+    await Future.wait([
+      _prefs.setInt(_kSessions, _completedSessions),
+      _prefs.setInt(_kFocusMinutes, _focusMinutesToday),
+      _prefs.setString(_kLastDate, _todayKey),
+      _saveDailyStats(),
+      _saveFocusSessions(),
+    ]);
+    return session;
+  }
+
+  List<DailyStat> getDailyStats({int days = 7, int offsetDays = 0}) {
+    final today = _now();
+    return List.generate(days, (index) {
+      final daysAgo = offsetDays + (days - 1 - index);
+      final date = DateTime(
+        today.year,
+        today.month,
+        today.day,
+      ).subtract(Duration(days: daysAgo));
+      final key = _dateKey(date);
+      final data = _dailyStats[key] as Map<String, dynamic>?;
       return DailyStat(
         date: date,
-        sessions: (data?['sessions'] as int?) ?? 0,
-        focusMinutes: (data?['minutes'] as int?) ?? 0,
+        sessions: key == _todayKey
+            ? _completedSessions
+            : (data?['sessions'] as num?)?.toInt() ?? 0,
+        focusMinutes: key == _todayKey
+            ? _focusMinutesToday
+            : (data?['minutes'] as num?)?.toInt() ?? 0,
       );
     });
   }
 
-  // ── BUG 4 FIX: persistencia del endTime ────────────────────────────────────
+  List<DailyStat> getWeeklyStats() => getDailyStats();
 
-  /// Guarda el momento exacto en que el timer debe terminar.
-  /// Permite reconstruir el tiempo restante si la app se cierra y reabre.
-  Future<void> saveTimerEndTime(DateTime endTime) async {
-    await _prefs.setString(_kTimerEndTime, endTime.toIso8601String());
+  Future<void> renameFocusSession(String id, String task) async {
+    final index = _focusSessions.indexWhere((session) => session.id == id);
+    if (index == -1) return;
+    _focusSessions[index] = _focusSessions[index].copyWith(task: task.trim());
+    await _saveFocusSessions();
   }
 
-  /// Elimina el endTime guardado (al pausar, resetear o completar).
-  Future<void> clearTimerEndTime() async {
-    await _prefs.remove(_kTimerEndTime);
+  Future<bool> deleteFocusSession(String id) async {
+    final index = _focusSessions.indexWhere((session) => session.id == id);
+    if (index == -1) return false;
+    final removed = _focusSessions.removeAt(index);
+    final key = _dateKey(removed.completedAt);
+    final existing = _dailyStats[key] as Map<String, dynamic>?;
+    final sessions = ((existing?['sessions'] as num?)?.toInt() ?? 0) - 1;
+    final minutes =
+        ((existing?['minutes'] as num?)?.toInt() ?? 0) - removed.focusMinutes;
+    final safeSessions = sessions.clamp(0, 1 << 30);
+    final safeMinutes = minutes.clamp(0, 1 << 30);
+    _dailyStats[key] = {'sessions': safeSessions, 'minutes': safeMinutes};
+
+    final writes = <Future<bool>>[];
+    if (key == _todayKey) {
+      _completedSessions = safeSessions;
+      _focusMinutesToday = safeMinutes;
+      writes.add(_prefs.setInt(_kSessions, _completedSessions));
+      writes.add(_prefs.setInt(_kFocusMinutes, _focusMinutesToday));
+    }
+    await Future.wait([...writes, _saveDailyStats(), _saveFocusSessions()]);
+    return true;
   }
 
-  /// Devuelve el endTime persistido si aún está en el futuro, o null.
-  DateTime? get savedTimerEndTime {
-    final raw = _prefs.getString(_kTimerEndTime);
-    if (raw == null) return null;
-    final dt = DateTime.tryParse(raw);
-    if (dt == null || dt.isBefore(DateTime.now())) return null;
-    return dt;
+  Future<bool> _saveDailyStats() async {
+    final keys = _dailyStats.keys.toList()..sort();
+    if (keys.length > 90) {
+      for (final key in keys.take(keys.length - 90)) {
+        _dailyStats.remove(key);
+      }
+    }
+    return _prefs.setString(_kDailyStats, jsonEncode(_dailyStats));
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
+  Future<bool> _saveFocusSessions() => _prefs.setString(
+    _kFocusSessions,
+    jsonEncode(_focusSessions.map((session) => session.toJson()).toList()),
+  );
 
-  // ── Configuración ──────────────────────────────────────────────────────────
+  Future<void> saveTimerSnapshot({
+    DateTime? endTime,
+    required TimerMode mode,
+    required String task,
+    bool isPaused = false,
+    int? remainingSeconds,
+  }) async {
+    final snapshot = TimerSnapshot(
+      endTime: endTime,
+      mode: mode,
+      task: task,
+      isPaused: isPaused,
+      remainingSeconds: remainingSeconds,
+    );
+    await _prefs.setString(_kTimerSnapshot, jsonEncode(snapshot.toJson()));
+    await _prefs.remove(_kLegacyTimerEndTime);
+  }
+
+  Future<void> clearTimerSnapshot() async {
+    await Future.wait([
+      _prefs.remove(_kTimerSnapshot),
+      _prefs.remove(_kLegacyTimerEndTime),
+    ]);
+  }
+
+  TimerSnapshot? get savedTimerSnapshot {
+    final raw = _prefs.getString(_kTimerSnapshot);
+    if (raw != null) {
+      try {
+        return TimerSnapshot.fromJson(
+          Map<String, dynamic>.from(jsonDecode(raw) as Map),
+        );
+      } on Object {
+        return null;
+      }
+    }
+
+    final legacy = _prefs.getString(_kLegacyTimerEndTime);
+    final endTime = legacy == null ? null : DateTime.tryParse(legacy);
+    if (endTime == null) return null;
+    return TimerSnapshot(endTime: endTime, mode: TimerMode.pomodoro, task: '');
+  }
 
   int get pomodoroDuration => _pomodoroDuration;
   int get shortBreakDuration => _shortBreakDuration;
@@ -194,6 +289,8 @@ class StorageService {
   bool get autoStartBreaks => _autoStartBreaks;
   bool get autoStartPomodoros => _autoStartPomodoros;
   bool get soundEnabled => _soundEnabled;
+  bool get notificationsEnabled => _notificationsEnabled;
+  bool get hapticsEnabled => _hapticsEnabled;
 
   Future<void> saveSettings({
     int? pomodoroDuration,
@@ -203,57 +300,46 @@ class StorageService {
     bool? autoStartBreaks,
     bool? autoStartPomodoros,
     bool? soundEnabled,
+    bool? notificationsEnabled,
+    bool? hapticsEnabled,
   }) async {
+    final writes = <Future<bool>>[];
     if (pomodoroDuration != null) {
-      await _prefs.setInt(_kPomodoroDuration, pomodoroDuration);
       _pomodoroDuration = pomodoroDuration;
+      writes.add(_prefs.setInt(_kPomodoroDuration, pomodoroDuration));
     }
     if (shortBreakDuration != null) {
-      await _prefs.setInt(_kShortBreakDuration, shortBreakDuration);
       _shortBreakDuration = shortBreakDuration;
+      writes.add(_prefs.setInt(_kShortBreakDuration, shortBreakDuration));
     }
     if (longBreakDuration != null) {
-      await _prefs.setInt(_kLongBreakDuration, longBreakDuration);
       _longBreakDuration = longBreakDuration;
+      writes.add(_prefs.setInt(_kLongBreakDuration, longBreakDuration));
     }
     if (dailyGoal != null) {
-      await _prefs.setInt(_kDailyGoal, dailyGoal);
       _dailyGoal = dailyGoal;
+      writes.add(_prefs.setInt(_kDailyGoal, dailyGoal));
     }
     if (autoStartBreaks != null) {
-      await _prefs.setBool(_kAutoStartBreaks, autoStartBreaks);
       _autoStartBreaks = autoStartBreaks;
+      writes.add(_prefs.setBool(_kAutoStartBreaks, autoStartBreaks));
     }
     if (autoStartPomodoros != null) {
-      await _prefs.setBool(_kAutoStartPomodoros, autoStartPomodoros);
       _autoStartPomodoros = autoStartPomodoros;
+      writes.add(_prefs.setBool(_kAutoStartPomodoros, autoStartPomodoros));
     }
     if (soundEnabled != null) {
-      await _prefs.setBool(_kSoundEnabled, soundEnabled);
       _soundEnabled = soundEnabled;
+      writes.add(_prefs.setBool(_kSoundEnabled, soundEnabled));
     }
+    if (notificationsEnabled != null) {
+      _notificationsEnabled = notificationsEnabled;
+      writes.add(_prefs.setBool(_kNotificationsEnabled, notificationsEnabled));
+    }
+    if (hapticsEnabled != null) {
+      _hapticsEnabled = hapticsEnabled;
+      writes.add(_prefs.setBool(_kHapticsEnabled, hapticsEnabled));
+    }
+    await Future.wait(writes);
   }
-
-  // ── Setters individuales (para compatibilidad con PomodoroNotifier) ────────
-
-  Future<void> setPomodoroDuration(int value) async =>
-      saveSettings(pomodoroDuration: value);
-
-  Future<void> setShortBreakDuration(int value) async =>
-      saveSettings(shortBreakDuration: value);
-
-  Future<void> setLongBreakDuration(int value) async =>
-      saveSettings(longBreakDuration: value);
-
-  Future<void> setDailyGoal(int value) async =>
-      saveSettings(dailyGoal: value);
-
-  Future<void> setAutoStartBreaks(bool value) async =>
-      saveSettings(autoStartBreaks: value);
-
-  Future<void> setAutoStartPomodoros(bool value) async =>
-      saveSettings(autoStartPomodoros: value);
-
-  Future<void> setSoundEnabled(bool value) async =>
-      saveSettings(soundEnabled: value);
 }

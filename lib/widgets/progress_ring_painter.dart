@@ -38,7 +38,7 @@ class ProgressRingPainter extends CustomPainter {
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
         -math.pi / 2, // arranca desde las 12
-        sweepAngle,   // avanza en sentido horario
+        sweepAngle, // avanza en sentido horario
         false,
         Paint()
           ..color = color

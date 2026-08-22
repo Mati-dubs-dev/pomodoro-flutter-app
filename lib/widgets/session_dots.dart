@@ -38,7 +38,7 @@ class SessionDots extends StatelessWidget {
               tween: Tween(begin: 0.0, end: isCompleted ? 1.0 : 0.0),
               duration: Duration(milliseconds: 300 + i * 40),
               curve: Curves.elasticOut,
-              builder: (_, value, __) {
+              builder: (_, value, _) {
                 return Transform.scale(
                   scale: isCompleted ? (0.9 + 0.1 * value) : 1.0,
                   child: AnimatedContainer(
@@ -51,15 +51,15 @@ class SessionDots extends StatelessWidget {
                       color: isCompleted
                           ? color
                           : isNext
-                              ? color.withOpacity(0.25)
-                              : Colors.white.withOpacity(0.1),
+                          ? color.withValues(alpha: 0.25)
+                          : Colors.white.withValues(alpha: 0.1),
                       boxShadow: isCompleted
                           ? [
                               BoxShadow(
-                                color: color.withOpacity(0.4),
+                                color: color.withValues(alpha: 0.4),
                                 blurRadius: 6,
                                 spreadRadius: 1,
-                              )
+                              ),
                             ]
                           : null,
                     ),
@@ -73,10 +73,7 @@ class SessionDots extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             '$completedSessions / $dailyGoal sesiones',
-            style: TextStyle(
-              color: color.withOpacity(0.6),
-              fontSize: 12,
-            ),
+            style: TextStyle(color: color.withValues(alpha: 0.6), fontSize: 12),
           ),
         ],
       ],

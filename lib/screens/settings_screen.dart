@@ -18,6 +18,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   late bool _autoStartBreaks;
   late bool _autoStartPomodoros;
   late bool _soundEnabled;
+  late bool _notificationsEnabled;
+  late bool _hapticsEnabled;
 
   bool _hasChanges = false;
 
@@ -32,13 +34,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _autoStartBreaks = s.autoStartBreaks;
     _autoStartPomodoros = s.autoStartPomodoros;
     _soundEnabled = s.soundEnabled;
+    _notificationsEnabled = s.notificationsEnabled;
+    _hapticsEnabled = s.hapticsEnabled;
   }
 
   void _markChanged() => setState(() => _hasChanges = true);
 
-  void _save() {
-    HapticService.buttonPress();
-    ref.read(pomodoroProvider.notifier).updateSettings(
+  Future<void> _save() async {
+    if (_hapticsEnabled) HapticService.buttonPress();
+    await ref
+        .read(pomodoroProvider.notifier)
+        .updateSettings(
           pomodoroDuration: _pomodoro,
           shortBreakDuration: _shortBreak,
           longBreakDuration: _longBreak,
@@ -46,8 +52,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           autoStartBreaks: _autoStartBreaks,
           autoStartPomodoros: _autoStartPomodoros,
           soundEnabled: _soundEnabled,
+          notificationsEnabled: _notificationsEnabled,
+          hapticsEnabled: _hapticsEnabled,
         );
-    Navigator.of(context).pop();
+    if (mounted) Navigator.of(context).pop();
   }
 
   @override
@@ -89,21 +97,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             value: _pomodoro,
             min: 1,
             max: 60,
-            onChanged: (v) { setState(() => _pomodoro = v); _markChanged(); },
+            onChanged: (v) {
+              setState(() => _pomodoro = v);
+              _markChanged();
+            },
           ),
           _DurationTile(
             label: 'Descanso corto',
             value: _shortBreak,
             min: 1,
             max: 30,
-            onChanged: (v) { setState(() => _shortBreak = v); _markChanged(); },
+            onChanged: (v) {
+              setState(() => _shortBreak = v);
+              _markChanged();
+            },
           ),
           _DurationTile(
             label: 'Descanso largo',
             value: _longBreak,
             min: 1,
             max: 60,
-            onChanged: (v) { setState(() => _longBreak = v); _markChanged(); },
+            onChanged: (v) {
+              setState(() => _longBreak = v);
+              _markChanged();
+            },
           ),
 
           const SizedBox(height: 20),
@@ -115,7 +132,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             value: _dailyGoal,
             min: 1,
             max: 20,
-            onChanged: (v) { setState(() => _dailyGoal = v); _markChanged(); },
+            onChanged: (v) {
+              setState(() => _dailyGoal = v);
+              _markChanged();
+            },
           ),
 
           const SizedBox(height: 20),
@@ -125,12 +145,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _SwitchTile(
             label: 'Iniciar descansos automáticamente',
             value: _autoStartBreaks,
-            onChanged: (v) { setState(() => _autoStartBreaks = v); _markChanged(); },
+            onChanged: (v) {
+              setState(() => _autoStartBreaks = v);
+              _markChanged();
+            },
           ),
           _SwitchTile(
             label: 'Iniciar pomodoros automáticamente',
             value: _autoStartPomodoros,
-            onChanged: (v) { setState(() => _autoStartPomodoros = v); _markChanged(); },
+            onChanged: (v) {
+              setState(() => _autoStartPomodoros = v);
+              _markChanged();
+            },
           ),
 
           const SizedBox(height: 20),
@@ -140,7 +166,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _SwitchTile(
             label: 'Sonido al completar',
             value: _soundEnabled,
-            onChanged: (v) { setState(() => _soundEnabled = v); _markChanged(); },
+            onChanged: (v) {
+              setState(() => _soundEnabled = v);
+              _markChanged();
+            },
+          ),
+          _SwitchTile(
+            label: 'Notificaciones al finalizar',
+            value: _notificationsEnabled,
+            onChanged: (v) {
+              setState(() => _notificationsEnabled = v);
+              _markChanged();
+            },
+          ),
+          _SwitchTile(
+            label: 'Vibración y respuesta háptica',
+            value: _hapticsEnabled,
+            onChanged: (v) {
+              setState(() => _hapticsEnabled = v);
+              _markChanged();
+            },
           ),
 
           const SizedBox(height: 20),
@@ -166,17 +211,17 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 10, left: 4),
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white38,
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.4,
-          ),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 10, left: 4),
+    child: Text(
+      title,
+      style: const TextStyle(
+        color: Colors.white38,
+        fontSize: 11,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.4,
+      ),
+    ),
+  );
 }
 
 class _DurationTile extends StatelessWidget {
@@ -200,7 +245,7 @@ class _DurationTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -212,8 +257,10 @@ class _DurationTile extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.remove_circle_outline_rounded,
-                color: Colors.white54),
+            icon: const Icon(
+              Icons.remove_circle_outline_rounded,
+              color: Colors.white54,
+            ),
             onPressed: value > min
                 ? () {
                     HapticService.adjustment();
@@ -237,8 +284,10 @@ class _DurationTile extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.add_circle_outline_rounded,
-                color: Colors.white54),
+            icon: const Icon(
+              Icons.add_circle_outline_rounded,
+              color: Colors.white54,
+            ),
             onPressed: value < max
                 ? () {
                     HapticService.adjustment();
@@ -272,7 +321,7 @@ class _SwitchTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -289,7 +338,7 @@ class _SwitchTile extends StatelessWidget {
               HapticService.buttonPress();
               onChanged(v);
             },
-            activeColor: const Color(0xFFFF6B6B),
+            activeThumbColor: const Color(0xFFFF6B6B),
           ),
         ],
       ),
@@ -309,9 +358,9 @@ class _InfoTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.07)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

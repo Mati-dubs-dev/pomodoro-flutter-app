@@ -1,107 +1,111 @@
 import 'dart:async';
 
-class TimerService {
+abstract interface class TimerDriver {
+  bool get isActive;
+  bool get isPaused;
+  Duration get remaining;
+  DateTime? get endTime;
+
+  void start({
+    required Duration duration,
+    required void Function(Duration remaining) onTick,
+    void Function()? onFinish,
+  });
+  void startFromEndTime({
+    required DateTime endTime,
+    required void Function(Duration remaining) onTick,
+    void Function()? onFinish,
+  });
+  void pause();
+  void resume();
+  void stop();
+  void dispose();
+}
+
+class TimerService implements TimerDriver {
+  final DateTime Function() _now;
   Timer? _timer;
-
-  Duration _duration = Duration.zero;
   Duration _remaining = Duration.zero;
-
   DateTime? _endTime;
-
   void Function(Duration remaining)? _onTick;
   void Function()? _onFinish;
-
   bool _isPaused = false;
   Duration _pausedRemaining = Duration.zero;
 
+  TimerService({DateTime Function()? now}) : _now = now ?? DateTime.now;
+
+  @override
   bool get isActive => _timer?.isActive ?? false;
+  @override
   bool get isPaused => _isPaused;
-
+  @override
   Duration get remaining => _remaining;
-  Duration get duration => _duration;
-
-  /// endTime actual, útil para persistirlo externamente.
+  @override
   DateTime? get endTime => _endTime;
 
+  @override
   void start({
     required Duration duration,
     required void Function(Duration remaining) onTick,
     void Function()? onFinish,
   }) {
     stop();
-
-    _duration = duration;
     _remaining = duration;
     _onTick = onTick;
     _onFinish = onFinish;
-    _isPaused = false;
-
-    _endTime = DateTime.now().add(duration);
-
+    _endTime = _now().add(duration);
     _timer = Timer.periodic(const Duration(seconds: 1), _tick);
   }
 
-  /// Reanuda el timer usando un endTime ya conocido (restaurado desde storage).
-  /// Útil para reconstruir el estado tras un reinicio de la app.
+  @override
   void startFromEndTime({
     required DateTime endTime,
     required void Function(Duration remaining) onTick,
     void Function()? onFinish,
   }) {
     stop();
-
-    final remaining = endTime.difference(DateTime.now());
+    final remaining = endTime.difference(_now());
     if (remaining <= Duration.zero) {
-      // El timer ya habría terminado mientras la app estaba cerrada
       onFinish?.call();
       return;
     }
-
-    _duration = remaining;
     _remaining = remaining;
     _onTick = onTick;
     _onFinish = onFinish;
-    _isPaused = false;
     _endTime = endTime;
-
     _timer = Timer.periodic(const Duration(seconds: 1), _tick);
   }
 
   void _tick(Timer timer) {
     if (_isPaused || _endTime == null) return;
-
-    final now = DateTime.now();
-    final remaining = _endTime!.difference(now);
-
+    final remaining = _endTime!.difference(_now());
     if (remaining <= Duration.zero) {
       _remaining = Duration.zero;
-      _onTick?.call(_remaining);
-      _onFinish?.call();
+      _onTick?.call(Duration.zero);
+      final onFinish = _onFinish;
       stop();
+      onFinish?.call();
       return;
     }
-
     _remaining = remaining;
-    _onTick?.call(_remaining);
+    _onTick?.call(remaining);
   }
 
+  @override
   void pause() {
     if (!isActive || _isPaused) return;
     _isPaused = true;
     _pausedRemaining = _remaining;
   }
 
+  @override
   void resume() {
     if (!isActive || !_isPaused) return;
     _isPaused = false;
-    _endTime = DateTime.now().add(_pausedRemaining);
+    _endTime = _now().add(_pausedRemaining);
   }
 
-  void restart() {
-    if (_duration == Duration.zero || _onTick == null) return;
-    start(duration: _duration, onTick: _onTick!, onFinish: _onFinish);
-  }
-
+  @override
   void stop() {
     _timer?.cancel();
     _timer = null;
@@ -109,6 +113,7 @@ class TimerService {
     _endTime = null;
   }
 
+  @override
   void dispose() {
     stop();
     _onTick = null;
