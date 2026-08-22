@@ -15,7 +15,7 @@ Future<void> main() async {
   runApp(
     ProviderScope(
       overrides: [
-        // Inyectar la instancia de StorageService ya inicializada
+        // Inject the initialized StorageService instance.
         storageServiceProvider.overrideWithValue(storage),
         notificationServiceProvider.overrideWithValue(notifications),
       ],

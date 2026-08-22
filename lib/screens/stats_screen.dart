@@ -26,18 +26,18 @@ class StatsScreen extends ConsumerWidget {
     final difference = weeklyMinutes - previousMinutes;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Estadísticas')),
+      appBar: AppBar(title: const Text('Statistics')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         children: [
-          const _SectionTitle('HOY'),
+          const _SectionTitle('TODAY'),
           _TodayCard(
             sessions: state.completedSessions,
             dailyGoal: state.dailyGoal,
             color: _accent,
           ),
           const SizedBox(height: 24),
-          const _SectionTitle('ÚLTIMOS 7 DÍAS'),
+          const _SectionTitle('LAST 7 DAYS'),
           _Surface(
             child: WeeklyBarChart(stats: weeklyStats, color: _accent),
           ),
@@ -54,21 +54,21 @@ class StatsScreen extends ConsumerWidget {
                   _Metric(
                     width: width,
                     icon: Icons.check_circle_outline_rounded,
-                    label: 'Sesiones',
+                    label: 'Sessions',
                     value: '$weeklySessions',
                     color: _accent,
                   ),
                   _Metric(
                     width: width,
                     icon: Icons.timer_outlined,
-                    label: 'Foco',
+                    label: 'Focus',
                     value: formatMinutes(weeklyMinutes),
                     color: const Color(0xFF4ECDC4),
                   ),
                   _Metric(
                     width: width,
                     icon: Icons.local_fire_department_outlined,
-                    label: 'Racha',
+                    label: 'Streak',
                     value: '$streak d',
                     color: const Color(0xFFFFC107),
                   ),
@@ -77,7 +77,7 @@ class StatsScreen extends ConsumerWidget {
                     icon: difference >= 0
                         ? Icons.trending_up_rounded
                         : Icons.trending_down_rounded,
-                    label: 'vs. anterior',
+                    label: 'vs. previous',
                     value:
                         '${difference >= 0 ? '+' : ''}${formatMinutes(difference.abs())}',
                     color: difference >= 0
@@ -91,14 +91,14 @@ class StatsScreen extends ConsumerWidget {
           if (bestDay != null) ...[
             const SizedBox(height: 12),
             Text(
-              'Tu mejor día fue ${bestDay.weekdayLabel}: '
-              '${bestDay.sessions} ${bestDay.sessions == 1 ? 'sesión' : 'sesiones'}.',
+              'Your best day was ${bestDay.weekdayLabel}: '
+              '${bestDay.sessions} ${bestDay.sessions == 1 ? 'session' : 'sessions'}.',
               style: const TextStyle(color: Colors.white60),
             ),
           ],
           if (tasks.isNotEmpty) ...[
             const SizedBox(height: 28),
-            const _SectionTitle('FOCO POR TAREA'),
+            const _SectionTitle('FOCUS BY TASK'),
             _Surface(
               child: Column(
                 children: tasks.take(5).map((task) {
@@ -152,10 +152,10 @@ class StatsScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const _SectionTitle('HISTORIAL RECIENTE'),
+              const _SectionTitle('RECENT HISTORY'),
               if (history.isNotEmpty)
                 Text(
-                  '${history.length} guardadas',
+                  '${history.length} saved',
                   style: const TextStyle(color: Colors.white38, fontSize: 12),
                 ),
             ],
@@ -189,22 +189,22 @@ class StatsScreen extends ConsumerWidget {
     final value = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Editar tarea'),
+        title: const Text('Edit task'),
         content: TextField(
           controller: controller,
           autofocus: true,
           maxLength: 80,
-          decoration: const InputDecoration(hintText: 'Nombre de la tarea'),
+          decoration: const InputDecoration(hintText: 'Task name'),
           onSubmitted: (value) => Navigator.pop(context, value),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+            child: const Text('Cancel'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('Guardar'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -225,18 +225,18 @@ class StatsScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Eliminar sesión'),
+        title: const Text('Delete session'),
         content: const Text(
-          'También se descontará de las estadísticas. Esta acción no se puede deshacer.',
+          'This session will also be removed from your statistics. This action cannot be undone.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: const Text('Cancel'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -302,7 +302,7 @@ class _TodayCard extends StatelessWidget {
     final progress = (sessions / dailyGoal).clamp(0.0, 1.0);
     return _Surface(
       child: Semantics(
-        label: '$sessions de $dailyGoal sesiones completadas hoy',
+        label: '$sessions of $dailyGoal sessions completed today',
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -310,7 +310,7 @@ class _TodayCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '$sessions de $dailyGoal sesiones',
+                    '$sessions of $dailyGoal sessions',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -404,7 +404,7 @@ class _HistoryTile extends StatelessWidget {
     final isToday =
         date.year == now.year && date.month == now.month && date.day == now.day;
     final dateText = isToday
-        ? 'Hoy ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}'
+        ? 'Today ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}'
         : '${date.day}/${date.month} · ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
     return ListTile(
       leading: const CircleAvatar(
@@ -418,11 +418,11 @@ class _HistoryTile extends StatelessWidget {
       ),
       subtitle: Text('$dateText · ${formatMinutes(session.focusMinutes)}'),
       trailing: PopupMenuButton<String>(
-        tooltip: 'Acciones de la sesión',
+        tooltip: 'Session actions',
         onSelected: (value) => value == 'edit' ? onEdit() : onDelete(),
         itemBuilder: (context) => const [
-          PopupMenuItem(value: 'edit', child: Text('Editar tarea')),
-          PopupMenuItem(value: 'delete', child: Text('Eliminar sesión')),
+          PopupMenuItem(value: 'edit', child: Text('Edit task')),
+          PopupMenuItem(value: 'delete', child: Text('Delete session')),
         ],
       ),
     );
@@ -439,7 +439,7 @@ class _EmptyHistory extends StatelessWidget {
         Icon(Icons.insights_rounded, color: Colors.white38, size: 32),
         SizedBox(height: 10),
         Text(
-          'Completá tu primer Pomodoro para ver el historial.',
+          'Complete your first Pomodoro to see your history.',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.white60),
         ),

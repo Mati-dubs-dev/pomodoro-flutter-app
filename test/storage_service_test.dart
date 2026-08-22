@@ -9,7 +9,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-    'archiva el día anterior y reinicia contadores al cambiar de fecha',
+    'archives the previous day and resets counters after date rollover',
     () async {
       final now = DateTime(2026, 8, 21, 8);
       SharedPreferences.setMockInitialValues({
@@ -31,7 +31,7 @@ void main() {
     },
   );
 
-  test('la primera sesión del nuevo día comienza en uno', () async {
+  test('the first session of a new day starts at one', () async {
     final now = DateTime(2026, 8, 21, 9);
     SharedPreferences.setMockInitialValues({
       'last_date': '2026-08-20',
@@ -51,7 +51,7 @@ void main() {
     expect(storage.focusSessions, hasLength(1));
   });
 
-  test('conserva snapshots vencidos para reconciliarlos al abrir', () async {
+  test('keeps expired snapshots for reconciliation at startup', () async {
     final now = DateTime(2026, 8, 21, 12);
     SharedPreferences.setMockInitialValues({});
     final storage = await StorageService.create(now: () => now);
@@ -68,13 +68,13 @@ void main() {
     expect(snapshot.endTime!.isBefore(now), isTrue);
   });
 
-  test('eliminar una sesión descuenta el total y los minutos', () async {
+  test('deleting a session subtracts its count and minutes', () async {
     final now = DateTime(2026, 8, 21, 12);
     SharedPreferences.setMockInitialValues({});
     final storage = await StorageService.create(now: () => now);
     final session = await storage.recordCompletedSession(
       pomodoroMinutes: 25,
-      task: 'Código',
+      task: 'Coding',
     );
 
     await storage.deleteFocusSession(session.id);

@@ -261,7 +261,7 @@ class PomodoroNotifier extends StateNotifier<PomodoroState> {
         completedSessions: state.completedSessions,
       );
     } on Object catch (error) {
-      debugPrint('No se pudo programar la notificación: $error');
+      debugPrint('Could not schedule the notification: $error');
     }
   }
 

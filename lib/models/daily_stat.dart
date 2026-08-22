@@ -1,4 +1,4 @@
-/// Estadísticas de un día específico.
+/// Statistics for a specific day.
 class DailyStat {
   final DateTime date;
   final int sessions;
@@ -10,9 +10,9 @@ class DailyStat {
     required this.focusMinutes,
   });
 
-  /// Nombre corto del día de la semana en español.
+  /// Short weekday label.
   String get weekdayLabel {
-    const labels = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     return labels[date.weekday - 1];
   }
 

@@ -1,25 +1,25 @@
-## Objetivo
+## Goal
 
-Describe el problema y el resultado buscado.
+Describe the problem and expected outcome.
 
-## Cambios realizados
+## Changes
 
-- Describe aquí los cambios principales.
+- Describe the main changes here.
 
-## Verificación
+## Verification
 
-- [ ] Ejecuté `dart format --output=none --set-exit-if-changed lib test`.
-- [ ] Ejecuté `flutter analyze`.
-- [ ] Ejecuté `flutter test`.
-- [ ] Añadí o actualicé pruebas cuando corresponde.
-- [ ] Probé manualmente las plataformas afectadas.
+- [ ] I ran `dart format --output=none --set-exit-if-changed lib test`.
+- [ ] I ran `flutter analyze`.
+- [ ] I ran `flutter test`.
+- [ ] I added or updated relevant tests.
+- [ ] I manually tested affected platforms.
 
-## Interfaz y accesibilidad
+## UI and accessibility
 
-- [ ] No aplica.
-- [ ] Adjunté capturas o vídeo.
-- [ ] Revisé pantallas compactas, escalado de texto y etiquetas semánticas.
+- [ ] Not applicable.
+- [ ] I attached screenshots or a video.
+- [ ] I checked compact layouts, text scaling, and semantic labels.
 
-## Notas para revisión
+## Review notes
 
-Indica decisiones, riesgos, migraciones o trabajo posterior.
+Explain decisions, risks, migrations, or follow-up work.

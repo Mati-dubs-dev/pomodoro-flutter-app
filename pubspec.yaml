@@ -13,11 +13,11 @@ dependencies:
   # State management
   flutter_riverpod: ^2.5.1
 
-  # Notificaciones locales
+  # Local notifications
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.4
 
-  # Persistencia
+  # Persistence
   shared_preferences: ^2.3.2
   cupertino_icons: ^1.0.9
 

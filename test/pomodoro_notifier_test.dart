@@ -11,7 +11,7 @@ import 'support/fakes.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('programa un aviso y registra tarea al completar una sesión', () async {
+  test('schedules an alert and records the task on completion', () async {
     SharedPreferences.setMockInitialValues({'haptics_enabled': false});
     final storage = await StorageService.create();
     final timer = FakeTimerDriver();
@@ -19,7 +19,7 @@ void main() {
     final notifications = FakeNotifications();
     final notifier = PomodoroNotifier(timer, audio, notifications, storage);
 
-    notifier.setCurrentTask('Corregir navegación');
+    notifier.setCurrentTask('Fix navigation');
     await notifier.start();
     timer.finish();
     await Future<void>.delayed(const Duration(milliseconds: 20));
@@ -28,12 +28,12 @@ void main() {
     expect(notifications.scheduled, 1);
     expect(notifier.state.completedSessions, 1);
     expect(notifier.state.mode, TimerMode.shortBreak);
-    expect(storage.focusSessions.single.task, 'Corregir navegación');
+    expect(storage.focusSessions.single.task, 'Fix navigation');
     expect(audio.focusSounds, 1);
     notifier.dispose();
   });
 
-  test('reconcilia una sesión que venció con la app cerrada', () async {
+  test('reconciles a session that expired while the app was closed', () async {
     final expired = DateTime.now().subtract(const Duration(minutes: 1));
     SharedPreferences.setMockInitialValues({
       'last_date': _dateKey(DateTime.now()),
@@ -41,7 +41,7 @@ void main() {
       'timer_snapshot_v1': jsonEncode({
         'endTime': expired.toIso8601String(),
         'mode': 'pomodoro',
-        'task': 'Trabajo sin conexión',
+        'task': 'Offline work',
       }),
     });
     final storage = await StorageService.create();
@@ -55,12 +55,12 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 30));
 
     expect(notifier.state.completedSessions, 1);
-    expect(storage.focusSessions.single.task, 'Trabajo sin conexión');
+    expect(storage.focusSessions.single.task, 'Offline work');
     expect(storage.savedTimerSnapshot, isNull);
     notifier.dispose();
   });
 
-  test('restaura una sesión pausada sin iniciarla automáticamente', () async {
+  test('restores a paused session without starting it automatically', () async {
     SharedPreferences.setMockInitialValues({'haptics_enabled': false});
     final storage = await StorageService.create();
     final timer = FakeTimerDriver();
@@ -90,7 +90,7 @@ void main() {
     restored.dispose();
   });
 
-  test('desactivar sonido no desactiva la notificación', () async {
+  test('disabling sound does not disable notifications', () async {
     SharedPreferences.setMockInitialValues({
       'sound_enabled': false,
       'notifications_enabled': true,

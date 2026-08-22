@@ -1,41 +1,40 @@
-name: Proponer una función
-description: Sugiere una mejora para Pomodoro Pro.
+name: Feature request
+description: Suggest an improvement to Pomodoro Pro.
 title: "[Feature]: "
-labels:
-  - enhancement
+labels: [enhancement]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: Problema o necesidad
-      description: Explica el caso de uso que quieres resolver.
+      label: Problem or need
+      description: Explain the use case you want to address.
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Solución propuesta
-      description: Describe el comportamiento esperado.
+      label: Proposed solution
+      description: Describe the expected behavior.
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternativas consideradas
+      label: Alternatives considered
   - type: checkboxes
     id: impact
     attributes:
-      label: Impacto esperado
+      label: Expected impact
       options:
-        - label: Cambia la interfaz.
-        - label: Cambia datos persistidos.
-        - label: Requiere permisos nuevos.
-        - label: Afecta accesibilidad.
-        - label: Afecta varias plataformas.
+        - label: Changes the UI.
+        - label: Changes persisted data.
+        - label: Requires new permissions.
+        - label: Affects accessibility.
+        - label: Affects multiple platforms.
   - type: checkboxes
     id: checks
     attributes:
-      label: Comprobación
+      label: Check
       options:
-        - label: Busqué propuestas existentes antes de crear esta solicitud.
+        - label: I searched existing requests before creating this one.
           required: true

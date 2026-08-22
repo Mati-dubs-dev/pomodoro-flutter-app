@@ -127,26 +127,26 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
     final task = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('¿En qué vas a enfocarte?'),
+        title: const Text('What will you focus on?'),
         content: TextField(
           controller: controller,
           autofocus: true,
           maxLength: 80,
           textInputAction: TextInputAction.done,
           decoration: const InputDecoration(
-            hintText: 'Ej.: terminar la pantalla de inicio',
-            helperText: 'Podés dejarlo vacío y comenzar igual.',
+            hintText: 'For example: finish the home screen',
+            helperText: 'You can leave this empty and start anyway.',
           ),
           onSubmitted: (value) => Navigator.pop(context, value),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, ''),
-            child: const Text('Sin tarea'),
+            child: const Text('No task'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('Guardar'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -159,18 +159,18 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('¿Saltar este bloque?'),
+        title: const Text('Skip this block?'),
         content: const Text(
-          'El bloque actual no se contará como una sesión completada.',
+          'The current block will not count as a completed session.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: const Text('Cancel'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Saltar'),
+            child: const Text('Skip'),
           ),
         ],
       ),
@@ -195,14 +195,14 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                completedFocus ? 'Sesión completada' : 'Descanso terminado',
+                completedFocus ? 'Focus session complete' : 'Break complete',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
               Text(
                 completedFocus
-                    ? 'Buen trabajo. Elegí cómo querés continuar.'
-                    : 'Tu siguiente bloque de foco está listo.',
+                    ? 'Great work. Choose how you want to continue.'
+                    : 'Your next focus block is ready.',
               ),
               const SizedBox(height: 20),
               FilledButton.icon(
@@ -215,9 +215,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                   }
                 },
                 icon: const Icon(Icons.play_arrow_rounded),
-                label: Text(
-                  completedFocus ? 'Iniciar descanso' : 'Iniciar Pomodoro',
-                ),
+                label: Text(completedFocus ? 'Start break' : 'Start Pomodoro'),
               ),
               if (completedFocus) ...[
                 const SizedBox(height: 8),
@@ -227,12 +225,12 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                     ref.read(pomodoroProvider.notifier).extendFocus();
                   },
                   icon: const Icon(Icons.add_alarm_rounded),
-                  label: const Text('Extender 5 minutos'),
+                  label: const Text('Add 5 minutes'),
                 ),
               ],
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Ahora no'),
+                child: const Text('Not now'),
               ),
             ],
           ),
@@ -259,7 +257,7 @@ class _TaskIntent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: enabled,
-      label: task.isEmpty ? 'Definir tarea de enfoque' : 'Tarea actual: $task',
+      label: task.isEmpty ? 'Set focus task' : 'Current task: $task',
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: InkWell(
@@ -279,7 +277,7 @@ class _TaskIntent extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    task.isEmpty ? '¿En qué vas a enfocarte?' : task,
+                    task.isEmpty ? 'What will you focus on?' : task,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -317,7 +315,7 @@ class _TopBar extends StatelessWidget {
         children: [
           Semantics(
             label:
-                '${state.completedSessions} de ${state.dailyGoal} sesiones completadas hoy',
+                '${state.completedSessions} of ${state.dailyGoal} sessions completed today',
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 400),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -355,7 +353,7 @@ class _TopBar extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.bar_chart_rounded),
                 color: Colors.white70,
-                tooltip: 'Estadísticas',
+                tooltip: 'Statistics',
                 onPressed: () => Navigator.of(
                   context,
                 ).push(MaterialPageRoute(builder: (_) => const StatsScreen())),
@@ -363,7 +361,7 @@ class _TopBar extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.tune_rounded),
                 color: Colors.white70,
-                tooltip: 'Configuración',
+                tooltip: 'Settings',
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SettingsScreen()),
                 ),
@@ -391,7 +389,7 @@ class _TimerRing extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       liveRegion: true,
-      label: '${state.mode.label}, ${formatTime(state.timeLeft)} restantes',
+      label: '${state.mode.label}, ${formatTime(state.timeLeft)} remaining',
       child: ExcludeSemantics(
         child: AnimatedScale(
           scale: state.isRunning ? 1.03 : 1.0,

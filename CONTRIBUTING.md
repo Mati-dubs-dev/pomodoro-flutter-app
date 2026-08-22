@@ -1,15 +1,15 @@
-# Guía de contribución
+# Contributing guide
 
-Gracias por tu interés en mejorar Pomodoro Pro. Esta guía explica cómo proponer cambios fáciles de revisar y mantener.
+Thank you for helping improve Pomodoro Pro. This guide keeps contributions easy to review and maintain.
 
-## Antes de comenzar
+## Before you start
 
-- Revisa los issues abiertos para evitar trabajo duplicado.
-- Para cambios grandes, abre primero un issue y describe el problema, la solución y sus efectos por plataforma.
-- No incluyas credenciales, certificados, claves de firma ni datos personales.
-- Respeta el [Código de conducta](CODE_OF_CONDUCT.md).
+- Search open issues to avoid duplicate work.
+- Open an issue before a large change and explain the problem, proposal, and platform impact.
+- Never include credentials, signing certificates, private keys, or personal data.
+- Follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-## Preparar el entorno
+## Set up the project
 
 ```bash
 git clone https://github.com/Mati-dubs-dev/pomodoro-flutter-app.git
@@ -18,27 +18,27 @@ flutter pub get
 flutter doctor -v
 ```
 
-Crea una rama descriptiva desde `main`:
+Create a descriptive branch from `main`:
 
 ```bash
 git switch main
 git pull --ff-only
-git switch -c feat/nombre-del-cambio
+git switch -c feat/short-change-name
 ```
 
-Prefijos sugeridos: `feat/`, `fix/`, `docs/`, `test/`, `refactor/` y `chore/`.
+Suggested prefixes are `feat/`, `fix/`, `docs/`, `test/`, `refactor/`, and `chore/`.
 
-## Convenciones
+## Project conventions
 
-- Sigue `analysis_options.yaml` y formatea los archivos Dart.
-- Mantén las reglas de negocio fuera de los widgets cuando sea posible.
-- Inyecta reloj y servicios externos para poder probar sin esperas reales.
-- Conserva la compatibilidad al cambiar modelos persistidos.
-- Comprueba accesibilidad y tamaños compactos al modificar la interfaz.
-- No confirmes `build/`, `.dart_tool/`, archivos del IDE ni secretos.
-- No edites registrantes de plugins manualmente; regénéralos con Flutter.
+- Follow `analysis_options.yaml` and format all changed Dart files.
+- Keep business rules outside widgets whenever practical.
+- Inject clocks and external services so tests do not require real-time waits.
+- Preserve backward compatibility when changing persisted models.
+- Check accessibility and compact layouts when changing the UI.
+- Do not commit `build/`, `.dart_tool/`, IDE files, or secrets.
+- Regenerate plugin registrants with Flutter instead of editing them manually.
 
-## Verificación obligatoria
+## Required verification
 
 ```bash
 dart format --output=none --set-exit-if-changed lib test
@@ -47,29 +47,16 @@ flutter test
 flutter build web --release
 ```
 
-Si el cambio afecta una plataforma concreta, compílala y describe la prueba manual. Los cambios de notificaciones, restauración o fecha deben probarse también en un dispositivo real.
+Build any platform directly affected by your change and describe manual testing in the pull request. Test notification, restoration, and date-rollover changes on a physical device.
 
-## Commits
+## Commits and pull requests
 
-Usa mensajes breves en modo imperativo, por ejemplo:
+Use short imperative commit messages, such as `feat: add session export` or `fix: restore paused timer after restart`.
 
-```text
-feat: add session export
-fix: restore paused timer after restart
-docs: explain Android notification permissions
-test: cover midnight rollover
-```
+Complete the pull request template with the problem, solution, verification, affected platforms, and screenshots for UI changes. Document migrations, risks, and known incompatibilities. Keep unrelated formatting or refactors out of the change.
 
-Evita mezclar reformateos masivos o archivos no relacionados.
+## Bug reports and feature proposals
 
-## Pull requests
+Bug reports should include reproducible steps, expected and actual behavior, platform versions, and relevant `flutter doctor -v` output with personal data removed.
 
-Completa la plantilla e incluye el problema, la solución, las pruebas realizadas, las plataformas afectadas y capturas si cambia la interfaz. Documenta migraciones, riesgos o incompatibilidades. Los mantenedores pueden solicitar dividir cambios demasiado amplios.
-
-## Reportar errores
-
-Incluye pasos reproducibles, resultado esperado y actual, plataforma, versiones y salida relevante de `flutter doctor -v`. Elimina datos personales de los registros.
-
-## Proponer funciones
-
-Explica primero el caso de uso. Indica si la propuesta modifica datos, permisos, privacidad, accesibilidad o comportamiento entre plataformas.
+Feature proposals should begin with the use case and note any impact on persisted data, permissions, privacy, accessibility, or platform behavior.

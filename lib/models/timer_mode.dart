@@ -1,7 +1,7 @@
 enum TimerMode { pomodoro, shortBreak, longBreak }
 
 extension TimerModeExtension on TimerMode {
-  /// Duración por defecto en segundos (se puede sobreescribir en configuración).
+  /// Default duration in seconds (can be overridden in settings).
   int get defaultDuration {
     switch (this) {
       case TimerMode.pomodoro:
@@ -13,39 +13,39 @@ extension TimerModeExtension on TimerMode {
     }
   }
 
-  /// Etiqueta en español para mostrar en la UI.
+  /// User-facing label.
   String get label {
     switch (this) {
       case TimerMode.pomodoro:
         return 'Pomodoro';
       case TimerMode.shortBreak:
-        return 'Descanso corto';
+        return 'Short break';
       case TimerMode.longBreak:
-        return 'Descanso largo';
+        return 'Long break';
     }
   }
 
-  /// Etiqueta abreviada para espacios reducidos.
+  /// Abbreviated label for compact layouts.
   String get shortLabel {
     switch (this) {
       case TimerMode.pomodoro:
-        return 'Foco';
+        return 'Focus';
       case TimerMode.shortBreak:
-        return 'Descanso';
+        return 'Break';
       case TimerMode.longBreak:
-        return 'Pausa larga';
+        return 'Long break';
     }
   }
 
-  /// Mensaje que se muestra al completar el modo.
+  /// Message shown when this mode completes.
   String get completionMessage {
     switch (this) {
       case TimerMode.pomodoro:
-        return '¡Sesión completada! Tómate un descanso.';
+        return 'Session complete! Take a break.';
       case TimerMode.shortBreak:
-        return '¡Descanso terminado! A trabajar.';
+        return 'Break complete! Time to focus.';
       case TimerMode.longBreak:
-        return '¡Pausa larga terminada! ¡Sos una máquina!';
+        return 'Long break complete! You are doing great!';
     }
   }
 

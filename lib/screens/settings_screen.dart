@@ -66,7 +66,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'Configuración',
+          'Settings',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -77,7 +77,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: TextButton(
               onPressed: _hasChanges ? _save : null,
               child: const Text(
-                'Guardar',
+                'Save',
                 style: TextStyle(
                   color: Color(0xFFFF6B6B),
                   fontWeight: FontWeight.bold,
@@ -90,8 +90,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          // ── Duraciones ──────────────────────────────────────────────
-          _SectionTitle('DURACIONES (minutos)'),
+          // Durations.
+          _SectionTitle('DURATIONS (minutes)'),
           _DurationTile(
             label: 'Pomodoro',
             value: _pomodoro,
@@ -103,7 +103,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
           _DurationTile(
-            label: 'Descanso corto',
+            label: 'Short break',
             value: _shortBreak,
             min: 1,
             max: 30,
@@ -113,7 +113,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
           _DurationTile(
-            label: 'Descanso largo',
+            label: 'Long break',
             value: _longBreak,
             min: 1,
             max: 60,
@@ -125,10 +125,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
           const SizedBox(height: 20),
 
-          // ── Objetivo diario ──────────────────────────────────────────
-          _SectionTitle('OBJETIVO DIARIO'),
+          // Daily goal.
+          _SectionTitle('DAILY GOAL'),
           _DurationTile(
-            label: 'Sesiones por día',
+            label: 'Sessions per day',
             value: _dailyGoal,
             min: 1,
             max: 20,
@@ -140,10 +140,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
           const SizedBox(height: 20),
 
-          // ── Automatización ───────────────────────────────────────────
-          _SectionTitle('AUTOMATIZACIÓN'),
+          // Automation.
+          _SectionTitle('AUTOMATION'),
           _SwitchTile(
-            label: 'Iniciar descansos automáticamente',
+            label: 'Start breaks automatically',
             value: _autoStartBreaks,
             onChanged: (v) {
               setState(() => _autoStartBreaks = v);
@@ -151,7 +151,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
           _SwitchTile(
-            label: 'Iniciar pomodoros automáticamente',
+            label: 'Start Pomodoros automatically',
             value: _autoStartPomodoros,
             onChanged: (v) {
               setState(() => _autoStartPomodoros = v);
@@ -161,10 +161,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
           const SizedBox(height: 20),
 
-          // ── Sonido ───────────────────────────────────────────────────
-          _SectionTitle('SONIDO'),
+          // Alerts.
+          _SectionTitle('ALERTS'),
           _SwitchTile(
-            label: 'Sonido al completar',
+            label: 'Completion sound',
             value: _soundEnabled,
             onChanged: (v) {
               setState(() => _soundEnabled = v);
@@ -172,7 +172,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
           _SwitchTile(
-            label: 'Notificaciones al finalizar',
+            label: 'Completion notifications',
             value: _notificationsEnabled,
             onChanged: (v) {
               setState(() => _notificationsEnabled = v);
@@ -180,7 +180,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
           _SwitchTile(
-            label: 'Vibración y respuesta háptica',
+            label: 'Vibration and haptic feedback',
             value: _hapticsEnabled,
             onChanged: (v) {
               setState(() => _hapticsEnabled = v);
@@ -190,12 +190,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
           const SizedBox(height: 20),
 
-          // ── Secuencia ───────────────────────────────────────────────
-          _SectionTitle('SECUENCIA'),
+          // Sequence.
+          _SectionTitle('SEQUENCE'),
           _InfoTile(
             icon: Icons.info_outline_rounded,
             text:
-                'Cada 4 pomodoros completados se activa un descanso largo en lugar de un descanso corto.',
+                'A long break starts after every 4 completed Pomodoros instead of a short break.',
           ),
         ],
       ),
@@ -203,7 +203,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 }
 
-// ── Widgets auxiliares de Settings ──────────────────────────────────────────
+// Settings helper widgets.
 
 class _SectionTitle extends StatelessWidget {
   final String title;

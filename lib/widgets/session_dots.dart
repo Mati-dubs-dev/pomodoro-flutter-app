@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Muestra el progreso del objetivo diario como una fila de puntos animados.
-/// Los puntos completados se iluminan con [color]; los pendientes quedan apagados.
+/// Shows daily-goal progress as a row of animated dots.
+/// Completed dots use [color], while pending dots remain muted.
 class SessionDots extends StatelessWidget {
   final int completedSessions;
   final int dailyGoal;
@@ -16,7 +16,7 @@ class SessionDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Máximo 12 puntos para no desbordarse en pantallas pequeñas
+    // Limit to 12 dots to prevent overflow on small screens.
     final clampedGoal = dailyGoal.clamp(1, 12);
 
     return Column(
@@ -30,10 +30,8 @@ class SessionDots extends StatelessWidget {
             final isNext = i == completedSessions;
 
             return TweenAnimationBuilder<double>(
-              // ── BUG 5 FIX: key dinámica — fuerza reconstruir el tween
-              // cuando el dot cambia de estado (completado ↔ pendiente).
-              // Sin esto, Flutter reutiliza el widget y el tween no se
-              // re-evalúa al cambiar completedSessions.
+              // Rebuild the tween when a dot changes between pending and
+              // completed; otherwise Flutter may reuse the previous tween.
               key: ValueKey('dot_${i}_$isCompleted'),
               tween: Tween(begin: 0.0, end: isCompleted ? 1.0 : 0.0),
               duration: Duration(milliseconds: 300 + i * 40),
@@ -72,7 +70,7 @@ class SessionDots extends StatelessWidget {
         if (dailyGoal > 12) ...[
           const SizedBox(height: 6),
           Text(
-            '$completedSessions / $dailyGoal sesiones',
+            '$completedSessions / $dailyGoal sessions',
             style: TextStyle(color: color.withValues(alpha: 0.6), fontSize: 12),
           ),
         ],

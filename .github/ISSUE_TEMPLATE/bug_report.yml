@@ -1,60 +1,52 @@
-name: Reportar un error
-description: Informa un comportamiento reproducible de Pomodoro Pro.
+name: Bug report
+description: Report reproducible incorrect behavior in Pomodoro Pro.
 title: "[Bug]: "
-labels:
-  - bug
+labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: Gracias por ayudar. No incluyas datos personales ni vulnerabilidades.
+      value: Thank you for helping. Do not include personal data or security vulnerabilities.
   - type: textarea
     id: description
     attributes:
-      label: Descripción
-      description: Explica qué ocurrió y qué esperabas.
+      label: Description
+      description: Explain what happened and what you expected.
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Pasos para reproducirlo
+      label: Reproduction steps
       placeholder: |
-        1. Abre...
-        2. Pulsa...
-        3. Observa...
+        1. Open...
+        2. Select...
+        3. Observe...
     validations:
       required: true
   - type: dropdown
     id: platform
     attributes:
-      label: Plataforma
-      options:
-        - Android
-        - iOS
-        - Web
-        - Windows
-        - macOS
-        - Linux
-        - Varias plataformas
+      label: Platform
+      options: [Android, iOS, Web, Windows, macOS, Linux, Multiple platforms]
     validations:
       required: true
   - type: input
     id: versions
     attributes:
-      label: Versiones
-      description: Pomodoro Pro, Flutter, Dart y sistema operativo.
+      label: Versions
+      description: Pomodoro Pro, Flutter, Dart, and operating-system versions.
   - type: textarea
     id: logs
     attributes:
-      label: Registros o capturas
-      description: Adjunta solamente información sin datos sensibles.
+      label: Logs or screenshots
+      description: Attach only information that contains no sensitive data.
       render: shell
   - type: checkboxes
     id: checks
     attributes:
-      label: Comprobaciones
+      label: Checks
       options:
-        - label: Busqué issues existentes sobre el mismo problema.
+        - label: I searched existing issues for this problem.
           required: true
-        - label: Este reporte no contiene una vulnerabilidad.
+        - label: This report does not contain a security vulnerability.
           required: true

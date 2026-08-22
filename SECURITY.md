@@ -1,25 +1,17 @@
-# Política de seguridad
+# Security policy
 
-## Versiones compatibles
+## Supported versions
 
-El proyecto está en desarrollo activo. Las correcciones de seguridad se aplican a la última versión de la rama `main`.
+The project is under active development. Security fixes target the latest version on `main`.
 
-## Reportar una vulnerabilidad
+## Reporting a vulnerability
 
-No abras un issue público si el reporte permite explotar la aplicación, expone información privada o describe credenciales comprometidas.
+Do not open a public issue if a report enables exploitation, exposes private information, or describes compromised credentials.
 
-Utiliza **Report a vulnerability** en la pestaña Security del repositorio. Si no está disponible, contacta al mantenedor desde el perfil de [Mati-dubs-dev](https://github.com/Mati-dubs-dev) e indica que necesitas un canal privado.
+Use **Report a vulnerability** in the repository's Security tab. If unavailable, contact [Mati-dubs-dev](https://github.com/Mati-dubs-dev) and request a private channel.
 
-Incluye, cuando sea posible:
+Include the issue's scope, minimal reproduction steps, affected platforms and versions, expected impact, and a suggested mitigation when available. Never include real third-party data. Coordinate public disclosure after a fix is available.
 
-- Descripción y alcance.
-- Pasos mínimos para reproducirlo.
-- Plataformas y versiones afectadas.
-- Impacto esperado.
-- Propuesta de mitigación.
+## Scope
 
-No incluyas información real de terceros. La divulgación pública debe coordinarse después de disponer de una corrección.
-
-## Alcance
-
-Son especialmente relevantes los problemas relacionados con datos persistidos, permisos, notificaciones, dependencias, configuración de compilación y exposición accidental de secretos.
+Relevant reports include persisted data, permissions, notifications, dependencies, build configuration, and accidental secret exposure.
